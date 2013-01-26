@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LC_ALL=C git pull 2>&1 | grep -v "Current branch master is up to date"
+LC_ALL=C git pull 2>&1 | grep -v "Current branch master is up to date" | grep -v "Already up-to-date"
 
 export P=$(pwd)
 for x in $(ls | grep -v install.sh | grep -v README)
