@@ -1,7 +1,6 @@
 #!/bin/bash
 
-LC_ALL=C git pull 2>&1 | grep -v "Current branch master is up to date" | grep -v "Already up-to-date"
-
+cd $(dirname $0)
 export P=$(pwd)
 
 # shell scripts
@@ -16,7 +15,7 @@ done
 # setup update script
 
 echo '#!/bin/bash' > /usr/local/bin/pull-scripts
-echo 'sudo su -c "cd '$P'; ./install.sh"' >> /usr/local/bin/pull-scripts
+echo 'sudo su -c "'$P'/update.sh"' >> /usr/local/bin/pull-scripts
 chown root:root /usr/local/bin/pull-scripts
 chmod u=rwx,g=rx,o=rx /usr/local/bin/pull-scripts
 ln -f /usr/local/bin/pull-scripts /etc/cron.daily/pull-scripts
