@@ -13,14 +13,6 @@ do
 	chmod u=rwx,g=rx,o=rx $P/$x
 done
 
-# update system config
-
-cat > /etc/apt/apt.conf.d/60user << EOT
-APT::Get::Install-Recommends "false";
-APT::Get::Install-Suggests "false";
-Aptitude::Recommends-Important "false";
-EOT
-
 # setup update script
 
 echo '#!/bin/bash' > /usr/local/bin/pull-scripts
