@@ -1,0 +1,13 @@
+#!/bin/bash
+
+export a=$1
+shift
+export b=$1
+shift
+
+(
+echo "$a -> $b"
+rsync --stats --hard-links --human-readable -azvl -u --size-only "$a/" "$b/" $* --exclude "*.unison.*"
+echo "$b -> $a"
+rsync --stats --hard-links --human-readable -azvl -u --size-only "$b/" "$a/" $* --exclude "*.unison.*"
+)| grep -v "sending incremental file list" #| egrep -v '^sent' | egrep -v '^total size'

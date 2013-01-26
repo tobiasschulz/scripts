@@ -1,0 +1,20 @@
+#!/bin/bash
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+
+eval `cat /etc/lsb-release | grep "DISTRIB_CODENAME="`
+
+(
+	echo "**************"
+	date
+	aptitude update
+#aptitude safe-upgrade -o Aptitude::Delete-Unused=false --assume-yes --target-release ${DISTRIB_CODENAME}-security >> /var/log/apt-security-updates
+	aptitude safe-upgrade -o Aptitude::Delete-Unused=false --assume-yes
+	aptitude safe-upgrade -o Aptitude::Delete-Unused=false --assume-yes 2>&1 | grep -v "Need to get 0 B of archives"
+	aptitude clean
+	echo "Security updates (if any) installed"
+) > /tmp/update 2>&1
+
+cat /tmp/update >> /var/log/apt-security-updates
+grep "Need to get 0 B of archives" /tmp/update > /dev/null 2>&1 || cat /tmp/update
+rm -f /tmp/update

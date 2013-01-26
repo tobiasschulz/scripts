@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# hp-scan --adf -r150 --size=a4 --mode=color $*
+hp-scan --adf -r150 -a0,-30,210,297 --mode=color $*

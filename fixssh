@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# If the ssh config has got wrong permissions
+
+chmod 0660 /home/tobias/.ssh/config

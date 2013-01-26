@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Like fixmouse, but for wifi issues related to rtl8192ce.ko
+
+sudo modprobe -r rtl8192ce
+sleep 2
+sudo modprobe rtl8192ce
+sudo service network-manager restart

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mv /etc/passwd /tmp/passwd ; sort -n -t : -k 3,4 /tmp/passwd > /etc/passwd
+mv /etc/group /tmp/group ; sort -n -t : -k 3 /tmp/group > /etc/group

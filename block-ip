@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for x in $*
+do
+	iptables -A INPUT -s $x -j DROP
+done

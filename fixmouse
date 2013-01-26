@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# If X11 doesn't recognize mouse events any more, switch to a TTY and reload psmouse.ko
+
+sudo modprobe -r psmouse
+sleep 2
+sudo modprobe psmouse
