@@ -1,9 +1,8 @@
 #!/bin/bash
 
-git pull
+LC_ALL=C git pull 2>&1 | grep -v "Current branch master is up to date"
 
 export P=$(pwd)
-
 for x in $(ls | grep -v install.sh | grep -v README)
 do
 	ln -sf $P/$x /usr/local/bin/
