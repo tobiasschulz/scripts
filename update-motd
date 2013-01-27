@@ -1,6 +1,6 @@
 #!/bin/bash
 
 uname -snrvm > /var/run/motd
-for x in /etc/update-motd.d/*; do bash $x ; done
+(for x in /etc/update-motd.d/*; do bash $x ; done) >> /var/run/motd
 [ -f /etc/motd.tail ] && cat /etc/motd.tail >> /var/run/motd
 
