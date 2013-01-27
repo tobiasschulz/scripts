@@ -151,7 +151,7 @@ sub install {
 	system("mv /etc/crontab /etc/crontab.bak; grep -v hosts-availability /etc/crontab.bak > /etc/crontab");
 	{
 		open my $f, ">>", "/etc/crontab";
-		print $f '*/5 * * * * root '$0' check > /var/run/hosts-availability.new; mv /var/run/hosts-availability.new /var/run/hosts-availability; $(dirname '$0')/update-motd'"\n";
+		print $f '*/5 * * * * root '.$0.' check > /var/run/hosts-availability.new; mv /var/run/hosts-availability.new /var/run/hosts-availability; $(dirname '.$0.')/update-motd'."\n";
 		close $f;
 	}
 	unlink("/etc/update-motd.d/10-help-text");
