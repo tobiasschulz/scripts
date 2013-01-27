@@ -12,6 +12,10 @@ do
 	chmod u=rwx,g=rx,o=rx $P/$x
 done
 
+# hosts availability script
+
+hosts install
+
 # setup update script
 
 echo '#!/bin/bash' > /usr/local/bin/pull-scripts

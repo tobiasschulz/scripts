@@ -61,6 +61,7 @@ sub check {
         
         if ($ping) {
         	print BOLD GREEN "up";
+        	print MAGENTA " ".$ping;
         }
         else {
         	print BOLD RED "down";
@@ -74,7 +75,7 @@ sub check {
 
 sub ping_ms {
 	my ($ip) = @_;
-	my $line = `ping -c 1 tobias1  | grep time=`;
+	my $line = `ping -c 1 $ip | grep time=`;
 	if ($line =~ /time=(.*?)$/) {
 		my $ms = $1;
 		chomp $ms;
@@ -146,6 +147,15 @@ sub sync {
 	}
 }
 
+sub install {
+	system(q{echo "*/2 * * * * root }.$0.q{ check > /var/run/hosts-availability" > /etc/cron.d/hosts.d-script});
+	unlink("/etc/update-motd.d/10-help-text");
+	open my $f, ">", "/etc/update-motd.d/10-hosts";
+	print $f "cat /var/run/hosts-availability 2>/dev/null";
+	close $f;
+	system("chmod 0777 /etc/update-motd.d/10-hosts");
+}
+
 init;
 if (@ARGV && $ARGV[0] eq "add") {
 	shift @ARGV;
@@ -160,6 +170,9 @@ elsif (@ARGV && $ARGV[0] eq "list") {
 }
 elsif (@ARGV && $ARGV[0] eq "check") {
 	check;
+}
+elsif (@ARGV && $ARGV[0] eq "install") {
+	install;
 }
 else {
 	rebuild;
