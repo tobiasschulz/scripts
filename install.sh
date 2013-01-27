@@ -16,12 +16,12 @@ done
 
 for pkg in bind9
 do
-	dpkg -l | grep $pkg >/dev/null 2>&1 && aptitude purge $pkg
+	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $pkg
 done
 
 for pkg in update-motd netcat-openbsd landscape-common dnsmasq dnsutils
 do
-	dpkg -l | grep $pkg >/dev/null 2>&1 || aptitude install $pkg
+	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
 done
 
 # hosts availability script
