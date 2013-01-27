@@ -35,6 +35,6 @@ echo
 printf "  Welcome to %s at " "$DISTRIB_DESCRIPTION"
 echo -ne '\033[01;34m'$Name'\033[00m'" ("
 echo -ne '\033[01;33m'
-ifconfig  | grep inet | cut -d: -f2 | cut -d' ' -f1 | grep -v 127.0. | joinlines ", "
+ifconfig  | grep inet | cut -d: -f2 | cut -d' ' -f1 | grep -v 127.0. | egrep "...." | joinlines ", "
 echo -ne '\033[00m'
 printf ") (%s %s %s)\n" "$(uname -o)" "$(uname -r)" "$(uname -m)"
