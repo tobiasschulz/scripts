@@ -32,3 +32,9 @@ chown root:root /usr/local/bin/pull-scripts
 chmod u=rwx,g=rx,o=rx /usr/local/bin/pull-scripts
 ln -f /usr/local/bin/pull-scripts /etc/cron.daily/pull-scripts
 
+# install packages
+
+for pkg in update-motd netcat-openbsd landscape-common dnsmasq
+do
+	dpkg -l | grep $pkg >/dev/null 2>&1 || aptitude install $pkg
+done
