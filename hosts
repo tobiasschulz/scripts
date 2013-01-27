@@ -148,11 +148,18 @@ sub sync {
 }
 
 sub install {
-	system(q{echo "*/2 * * * * root }.$0.q{ check > /var/run/hosts-availability" > /etc/cron.d/hosts.d-script});
+	system("mv /etc/crontab /etc/crontab.bak; grep -v hosts-availability /etc/crontab.bak > /etc/crontab");
+	{
+		open my $f, ">>", "/etc/crontab";
+		print $f "* * * * * root $0 check > /var/run/hosts-availability\n";
+		close $f;
+	}
 	unlink("/etc/update-motd.d/10-help-text");
-	open my $f, ">", "/etc/update-motd.d/10-hosts";
-	print $f "cat /var/run/hosts-availability 2>/dev/null";
-	close $f;
+	{
+		open my $f, ">", "/etc/update-motd.d/10-hosts";
+		print $f "cat /var/run/hosts-availability 2>/dev/null\n";
+		close $f;
+	}
 	system("chmod 0777 /etc/update-motd.d/10-hosts");
 	system(q{dpkg -l | grep update-motd >/dev/null 2>&1 || aptitude install update-motd});
 }
