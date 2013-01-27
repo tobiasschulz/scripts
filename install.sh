@@ -16,6 +16,10 @@ done
 
 hosts install
 
+# update-motd.d script
+
+cp $P/update-motd.d_00-header /etc/update-motd.d/00-header
+
 # setup update script
 
 echo '#!/bin/bash' > /usr/local/bin/pull-scripts
