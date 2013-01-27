@@ -76,13 +76,14 @@ sub check {
         	print BOLD GREEN "up";
         	print MAGENTA " ".$ping;
 	        print padding($ping, 8);
+
+            print " (";
+            print join(", ", sort(check_ports($ip)));
+            print ")";
         }
         else {
         	print BOLD RED "down";
         }
-        print " (";
-        print join(", ", sort(check_ports($ip)));
-        print ")";
         print "\n";
     }
 }
