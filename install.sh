@@ -35,6 +35,7 @@ cp $P/update-motd.d_00-header /etc/update-motd.d/00-header
 # dnsmasq config
 
 cp $P/dnsmasq.conf /etc/dnsmasq.conf
+rm -f /etc/dnsmasq.d/network-manager
 
 # setup update script
 
