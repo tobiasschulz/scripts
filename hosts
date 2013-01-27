@@ -40,7 +40,7 @@ sub rebuild {
 
 sub list {
     my %hosts = hosts();
-    for my $host (keys %hosts) {
+    for my $host (sort keys %hosts) {
         my $ip = $hosts{$host};
         print "$ip $host\n";
     }
@@ -48,7 +48,7 @@ sub list {
 
 sub check {
     my %hosts = hosts();
-    for my $host (keys %hosts) {
+    for my $host (sort keys %hosts) {
         my $ip = $hosts{$host};
         
         my $ping = ping_ms($ip);
