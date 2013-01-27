@@ -157,7 +157,7 @@ sub install {
 	unlink("/etc/update-motd.d/10-help-text");
 	{
 		open my $f, ">", "/etc/update-motd.d/10-hosts";
-		print $f "echo; cat /var/run/hosts-availability 2>/dev/null\n";
+		print $f q{echo; cat /var/run/hosts-availability | perl -n -e 'print "  "; print;' 2>/dev/null\n};
 		close $f;
 	}
 	system("chmod 0777 /etc/update-motd.d/10-hosts");
