@@ -185,15 +185,17 @@ sub add {
 
 sub sync {
 	my @arg = @_;
-	for my $ip (split /\s+/, `cat /etc/hosts.d/*`) {
-		chomp $ip;
-		if (@arg) {
-			system("rsync -za $ip:/etc/hosts.d/ /etc/hosts.d/");
-			system("rsync -za /etc/hosts.d/ $ip:/etc/hosts.d/");
-		}
-		else {
-			system("rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $ip:/etc/hosts.d/ /etc/hosts.d/ 2>/dev/null");
-			system("rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za /etc/hosts.d/ $ip:/etc/hosts.d/ 2>/dev/null");
+	for my $dir (qw(/etc/tinc/tobiasschulz/hosts/ /etc/hosts.d/)) {
+		for my $ip (split /\s+/, `cat /etc/hosts.d/*`) {
+			chomp $ip;
+			if (@arg) {
+				system("rsync -za $ip:$dir $dir");
+				system("rsync -za $dir $ip:$dir");
+			}
+			else {
+				system("rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $ip:$dir $dir 2>/dev/null");
+				system("rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $dir $ip:$dir 2>/dev/null");
+			}
 		}
 	}
 }
