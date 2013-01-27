@@ -15,17 +15,33 @@ sub rebuild {
 	open my $f, "<", "/etc/hosts";
 	my $line;
 	while (defined($line = <$f>)) {
-		if ($line =~ /^..hosts.d/) {
+		if ($line =~ /^..hosts.d/ || $line =~ /^..static hosts/) {
 			last;
 		}
 		$hosts .= $line;
 	}
 	close $f;
 
+	$hosts =~ s/^\s+//igm;
 	$hosts =~ s/\s+$//igm;
 
 	open $f, ">", "/etc/hosts";
-	print $f $hosts;
+	print $f $hosts."\n\n" if $hosts;
+	
+	my $hostname = hostname();
+	
+	print $f qq{# static hosts IPv4
+127.0.0.1 localhost localhost.localdomain
+127.0.1.1 $hostname
+
+# static hosts IPv6
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts};
+	
 	print $f "\n\n# hosts.d\n";
 
     my %hosts = hosts();
@@ -36,6 +52,14 @@ sub rebuild {
 	}
 
 	close $f;
+}
+
+sub hostname {
+	open my $f, "<", "/etc/hostname";
+	my $hostname = <$f>;
+	chomp $hostname;
+	close $f;
+	return $hostname;
 }
 
 sub list {
