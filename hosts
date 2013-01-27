@@ -106,6 +106,7 @@ sub check_ports {
 			21 => "ftp", 22 => "ssh", 25 => "smtp", 80 => "http", 143 => "imap", 
 			443 => "https", 465 => "smtps", 993 => "imaps",
 			25565 => "minecraft", 10011 => "teamspeak",
+			5900 => "vnc:0", 5901 => "vnc:1", 5902 => "vnc:2", 5903 => "vnc:3", 5904 => "vnc:4", 5905 => "vnc:5",
 	);
 	
 	my @running = ();
