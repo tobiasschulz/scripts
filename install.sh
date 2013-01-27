@@ -5,7 +5,7 @@ export P=$(pwd)
 
 # shell scripts
 
-for x in $(ls | grep -v install.sh | grep -v README)
+for x in $(ls | grep -v install.sh | grep -v README | grep -v conf)
 do
 	ln -sf $P/$x /usr/local/bin/
 	chown root:root $P/$x
@@ -19,6 +19,10 @@ hosts install
 # update-motd.d script
 
 cp $P/update-motd.d_00-header /etc/update-motd.d/00-header
+
+# dnsmasq config
+
+cp $P/dnsmasq.conf /etc/dnsmasq.conf
 
 # setup update script
 
