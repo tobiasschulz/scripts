@@ -129,7 +129,7 @@ sub check_ports {
 	my ($ip) = @_;
 	my %ports = (
 			21 => "ftp", 22 => "ssh", 25 => "smtp", 80 => "http", 143 => "imap", 
-			443 => "https", 465 => "smtps", 993 => "imaps",
+			443 => "https", 465 => "smtps", 993 => "imaps", 53 => "dns",
 			25565 => "minecraft", 10011 => "teamspeak",
 			5900 => "vnc:0", 5901 => "vnc:1", 5902 => "vnc:2", 5903 => "vnc:3", 5904 => "vnc:4", 5905 => "vnc:5",
 	);
@@ -184,10 +184,17 @@ sub add {
 }
 
 sub sync {
+	my @arg = @_;
 	for my $ip (split /\s+/, `cat /etc/hosts.d/*`) {
 		chomp $ip;
-		system("rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $ip:/etc/hosts.d/ /etc/hosts.d/ 2>/dev/null");
-		system("rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za /etc/hosts.d/ $ip:/etc/hosts.d/ 2>/dev/null");
+		if (@arg) {
+			system("rsync -za $ip:/etc/hosts.d/ /etc/hosts.d/");
+			system("rsync -za /etc/hosts.d/ $ip:/etc/hosts.d/");
+		}
+		else {
+			system("rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $ip:/etc/hosts.d/ /etc/hosts.d/ 2>/dev/null");
+			system("rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za /etc/hosts.d/ $ip:/etc/hosts.d/ 2>/dev/null");
+		}
 	}
 }
 
@@ -220,7 +227,8 @@ if (@ARGV && $ARGV[0] eq "add") {
 	add @ARGV;
 }
 elsif (@ARGV && $ARGV[0] eq "sync") {
-	sync;
+	shift @ARGV;
+	sync @ARGV;
 	rebuild;
 }
 elsif (@ARGV && $ARGV[0] eq "list") {
