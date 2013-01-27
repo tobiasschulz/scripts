@@ -2,4 +2,9 @@
 
 # If the ssh config has got wrong permissions
 
-chmod 0660 /home/tobias/.ssh/config
+chmod 660 $HOME/.ssh/config
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_rsa
+chmod 644 ~/.ssh/id_rsa.pub
+chmod 644 ~/.ssh/authorized_keys
+chmod 644 ~/.ssh/known_hosts
