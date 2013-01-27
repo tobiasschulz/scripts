@@ -142,8 +142,8 @@ sub add {
 sub sync {
 	for my $ip (split /\s+/, `cat /etc/hosts.d/*`) {
 		chomp $ip;
-		system("rsync -e 'ssh -oBatchMode=yes ' -za $ip:/etc/hosts.d/ /etc/hosts.d/");
-		system("rsync -e 'ssh -oBatchMode=yes ' -za /etc/hosts.d/ $ip:/etc/hosts.d/");
+		system("rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $ip:/etc/hosts.d/ /etc/hosts.d/ 2>&1 | grep -v rsync:");
+		system("rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za /etc/hosts.d/ $ip:/etc/hosts.d/ 2>&1 | grep -v rsync:");
 	}
 }
 
