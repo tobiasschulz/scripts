@@ -46,6 +46,17 @@ sub list {
     }
 }
 
+sub padding {
+	my ($str, $len1) = @_;
+	my $len2 = length($str);
+	if ($len2 <= $len1) {
+		return " " x ($len1-$len2);
+	}
+	else {
+		return "";
+	}
+}
+
 sub check {
     my %hosts = hosts();
     for my $host (sort keys %hosts) {
@@ -55,13 +66,16 @@ sub check {
         
         local $Term::ANSIColor::AUTORESET = 1;
         print BLUE "$host";
+        print padding($host, 7);
         print " (";
         print YELLOW "$ip";
         print "): ";
+        print padding($ip, 15);
         
         if ($ping) {
         	print BOLD GREEN "up";
         	print MAGENTA " ".$ping;
+	        print padding($ping, 8);
         }
         else {
         	print BOLD RED "down";
