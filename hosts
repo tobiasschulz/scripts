@@ -163,6 +163,7 @@ sub install {
 	}
 	system("chmod 0777 /etc/update-motd.d/10-hosts");
 	system(q{dpkg -l | grep update-motd >/dev/null 2>&1 || aptitude install update-motd});
+	system(q{dpkg -l | grep netcat-openbsd >/dev/null 2>&1 || aptitude install netcat-openbsd});
 }
 
 init;
