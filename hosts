@@ -151,13 +151,13 @@ sub install {
 	system("mv /etc/crontab /etc/crontab.bak; grep -v hosts-availability /etc/crontab.bak > /etc/crontab");
 	{
 		open my $f, ">>", "/etc/crontab";
-		print $f "* * * * * root $0 check > /var/run/hosts-availability\n";
+		print $f "* * * * * root $0 check > /var/run/hosts-availability.new; mv /var/run/hosts-availability.new /var/run/hosts-availability\n";
 		close $f;
 	}
 	unlink("/etc/update-motd.d/10-help-text");
 	{
 		open my $f, ">", "/etc/update-motd.d/10-hosts";
-		print $f "cat /var/run/hosts-availability 2>/dev/null\n";
+		print $f "echo; cat /var/run/hosts-availability 2>/dev/null\n";
 		close $f;
 	}
 	system("chmod 0777 /etc/update-motd.d/10-hosts");
