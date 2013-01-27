@@ -10,5 +10,17 @@
 ##      are supported and installed on your system.
 ##  perl: warning: Falling back to the standard locale ("C").
 
-sudo locale-gen en_US de_DE
+sudo locale-gen de_DE.utf8 en_US.utf8
 
+cat > /etc/default/locale << EOT
+LANG="de_DE.UTF-8"
+LANGUAGE="de_DE:de"
+EOT
+
+cat > /etc/environment << EOT
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+CLUTTER_PAINT=disable-clipped-redraws:disable-culling
+CLUTTER_VBLANK=True
+LANG="de_DE.UTF-8"
+LANGUAGE="de_DE:de"
+EOT
