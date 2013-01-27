@@ -1,0 +1,168 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Term::ANSIColor qw(:constants :pushpop);
+
+sub init {
+	    mkdir "/etc/hosts.d";
+}
+
+sub rebuild {
+	my $hosts = "";
+
+	open my $f, "<", "/etc/hosts";
+	my $line;
+	while (defined($line = <$f>)) {
+		if ($line =~ /^..hosts.d/) {
+			last;
+		}
+		$hosts .= $line;
+	}
+	close $f;
+
+	$hosts =~ s/\s+$//igm;
+
+	open $f, ">", "/etc/hosts";
+	print $f $hosts;
+	print $f "\n\n# hosts.d\n";
+
+    my %hosts = hosts();
+	for my $host (keys %hosts) {
+		my $ip = $hosts{$host};
+
+		print $f "$ip $host $host.local\n";
+	}
+
+	close $f;
+}
+
+sub list {
+    my %hosts = hosts();
+    for my $host (keys %hosts) {
+        my $ip = $hosts{$host};
+        print "$ip $host\n";
+    }
+}
+
+sub check {
+    my %hosts = hosts();
+    for my $host (keys %hosts) {
+        my $ip = $hosts{$host};
+        
+        my $ping = ping_ms($ip);
+        
+        local $Term::ANSIColor::AUTORESET = 1;
+        print BLUE "$host";
+        print " (";
+        print YELLOW "$ip";
+        print "): ";
+        
+        if ($ping) {
+        	print BOLD GREEN "up";
+        }
+        else {
+        	print BOLD RED "down";
+        }
+        print " (";
+        print join(", ", sort(check_ports($ip)));
+        print ")";
+        print "\n";
+    }
+}
+
+sub ping_ms {
+	my ($ip) = @_;
+	my $line = `ping -c 1 tobias1  | grep time=`;
+	if ($line =~ /time=(.*?)$/) {
+		my $ms = $1;
+		chomp $ms;
+		return $ms;
+	}
+	else {
+		return;
+	}
+}
+
+sub check_ports {
+	my ($ip) = @_;
+	my %ports = ( 21 => "ftp", 22 => "ssh", 25 => "smtp", 80 => "http", 143 => "imap", 443 => "https", 465 => "smtps", 993 => "imaps" );
+	
+	my @running = ();
+	
+	for my $port (keys %ports) {
+		my $service = $ports{$port};
+		if (`nc -z $ip $port && echo true` =~ /true/) {
+			push @running, $service;
+		}
+	}
+	
+	return @running;
+}
+
+sub hosts {
+	my %hosts = ();
+    for my $host (split /\s+/, `cd /etc/hosts.d/; ls`) {
+        chomp $host;
+        open my $h, "<", "/etc/hosts.d/".$host;
+        my $ip = <$h>;
+        chomp $ip;
+        close $h;
+        $hosts{$host} = $ip;
+    }
+    return %hosts;
+}
+
+sub add {
+	my @arg = @_;
+
+	if (scalar @arg == 2) {
+	    my $ip = $arg[0];
+	    my $host = $arg[1];
+	    $ip =~ s/[^a-zA-Z0-9_.-]//igm;
+	    $host =~ s/[^a-zA-Z0-9_.-]//igm;
+	    if ($ip =~ /[a-zA-Z]/i) {
+	    	($host, $ip) = ($ip, $host);
+	    }
+	    
+	    print "IP: " . $ip . "\n";
+	    print "Host: " . $host . "\n";
+	    
+	    open my $f, ">", "/etc/hosts.d/".$host;
+	    print $f $ip."\n";
+	    close $f;
+	}
+	else {
+		print STDERR "Syntax: $0 add IP HOST\n";
+	}
+}
+
+sub sync {
+	for my $ip (split /\s+/, `cat /etc/hosts.d/*`) {
+		chomp $ip;
+		system("rsync -za $ip:/etc/hosts.d/ /etc/hosts.d/");
+		system("rsync -za /etc/hosts.d/ $ip:/etc/hosts.d/");
+	}
+}
+
+init;
+if (@ARGV && $ARGV[0] eq "add") {
+	shift @ARGV;
+	add @ARGV;
+}
+elsif (@ARGV && $ARGV[0] eq "sync") {
+	sync;
+	rebuild;
+}
+elsif (@ARGV && $ARGV[0] eq "list") {
+	list;
+}
+elsif (@ARGV && $ARGV[0] eq "check") {
+	check;
+}
+else {
+	rebuild;
+}
+
+1;
