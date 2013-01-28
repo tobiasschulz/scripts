@@ -234,7 +234,7 @@ sub install {
 		close $f;
 	}
 	system("ln -sf $0 /etc/init.d/hosts");
-	system("update-rc.d hosts defaults");
+	system("update-rc.d hosts defaults 2>&1 | grep -v 'already exist'");
 }
 
 init;
