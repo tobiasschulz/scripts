@@ -199,10 +199,12 @@ sub add {
 
 sub sync {
 	my @arg = @_;
-	for my $ip (split /\s+/, `cat /etc/hosts.d/*`) {
-		chomp $ip;
+	my %hosts = hosts();
+	for my $host (keys %hosts) {
+		my $ip = $hosts{$host};
 		for my $dir (qw(/etc/tinc/tobiasschulz/hosts/ /etc/hosts.d/)) {
 			if (@arg) {
+				print "$host ($ip):\n";
 				system("nc -z $ip 22 && nc -z $ip 53 && (rsync -zav $ip:$dir $dir ; rsync -zav $dir $ip:$dir)");
 			}
 			else {
