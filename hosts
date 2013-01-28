@@ -213,6 +213,11 @@ sub sync {
 }
 
 sub install {
+	# do not install anything when run from /etc/init.d !!
+	if ($0 =~ /init.d/) {
+		return;
+	}
+		
 	system("mv /etc/crontab /etc/crontab.bak; grep -v $0 /etc/crontab.bak > /etc/crontab");
 	{
 		open my $f, ">>", "/etc/crontab";
@@ -233,6 +238,7 @@ sub install {
 		print $f qq{nameserver 127.0.1.1\n};
 		close $f;
 	}
+	system("rm /etc/init.d/hosts");
 	system("ln -sf $0 /etc/init.d/hosts");
 	system("update-rc.d hosts defaults 2>&1 | grep -v 'already exist'");
 	system("comment-out pam_motd.so /etc/pam.d/*");

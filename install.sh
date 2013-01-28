@@ -19,7 +19,7 @@ do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $pkg
 done
 
-for pkg in update-motd netcat-openbsd landscape-common dnsmasq dnsutils
+for pkg in tinc update-motd netcat-openbsd landscape-common dnsmasq dnsutils
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
 done
@@ -49,3 +49,9 @@ chown root:root /usr/local/bin/pull-scripts
 chmod u=rwx,g=rx,o=rx /usr/local/bin/pull-scripts
 ln -f /usr/local/bin/pull-scripts /etc/cron.daily/pull-scripts
 
+# restart services
+
+for service in dnsmasq
+do
+	service $service restart
+done
