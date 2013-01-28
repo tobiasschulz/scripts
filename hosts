@@ -225,6 +225,8 @@ sub install {
 		print $f qq{nameserver 127.0.1.1\n};
 		close $f;
 	}
+	system("ln -sf $0 /etc/init.d/hosts");
+	system("update-rc.d hosts defaults");
 }
 
 init;
@@ -244,13 +246,13 @@ elsif (@ARGV && ($ARGV[0] eq "status" || $ARGV[0] eq "check")) {
 	check;
 }
 elsif (@ARGV && ($ARGV[0] eq "start" || $ARGV[0] eq "restart" || $ARGV[0] eq "install")) {
-    print "Starting hosts script..." if $ARGV[0] ne "restart";
-    print "Restarting hosts script..." if $ARGV[0] eq "restart";
+    print "Starting hosts script...\n" if $ARGV[0] eq "start";
+    print "Restarting hosts script...\n" if $ARGV[0] eq "restart";
 	install;
 	rebuild;
 }
 elsif (@ARGV && ($ARGV[0] eq "stop")) {
-    print "Stopping hosts script...";
+    print "Stopping hosts script...\n";
     rebuild;
 }
 else {
