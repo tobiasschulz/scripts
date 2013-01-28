@@ -235,7 +235,7 @@ sub install {
 	}
 	system("ln -sf $0 /etc/init.d/hosts");
 	system("update-rc.d hosts defaults 2>&1 | grep -v 'already exist'");
-	system("comment-out /etc/pam.d/login pam_motd.so");
+	system("comment-out pam_motd.so /etc/pam.d/*");
 }
 
 init;

@@ -32,6 +32,10 @@ hosts install
 
 cp $P/update-motd.d_00-header /etc/update-motd.d/00-header
 
+# bash profile
+
+cp $P/profile /etc/profile
+
 # dnsmasq config
 
 cp $P/dnsmasq.conf /etc/dnsmasq.conf
