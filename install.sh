@@ -31,6 +31,8 @@ hosts install
 # update-motd.d script
 
 cp -a $P/update-motd.d_00-header /etc/update-motd.d/00-header
+cp -a $P/update-motd /etc/init.d/update-motd
+update-rc.d update-motd defaults 2>&1 | grep -v 'already exist'
 
 # bash profile
 

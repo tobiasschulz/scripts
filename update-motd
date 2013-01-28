@@ -1,4 +1,12 @@
 #!/bin/bash
+### BEGIN INIT INFO
+# Provides:       update-motd
+# Required-Start: $network $remote_fs $syslog tinc
+# Required-Stop:  $network $remote_fs $syslog
+# Default-Start:  2 3 4 5
+# Default-Stop:   0 1 6
+# Description:    Update MOTD Script
+### END INIT INFO
 
 #uname -snrvm > /var/run/motd
 rm -f /var/run/motd
