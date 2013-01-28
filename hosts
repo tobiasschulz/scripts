@@ -240,14 +240,18 @@ elsif (@ARGV && $ARGV[0] eq "sync") {
 elsif (@ARGV && $ARGV[0] eq "list") {
 	list;
 }
-elsif (@ARGV && $ARGV[0] eq "check") {
+elsif (@ARGV && ($ARGV[0] eq "status" || $ARGV[0] eq "check")) {
 	check;
 }
-elsif (@ARGV && $ARGV[0] eq "status") {
-	check;
-}
-elsif (@ARGV && $ARGV[0] eq "install") {
+elsif (@ARGV && ($ARGV[0] eq "start" || $ARGV[0] eq "restart" || $ARGV[0] eq "install")) {
+    print "Starting hosts script..." if $ARGV[0] ne "restart";
+    print "Restarting hosts script..." if $ARGV[0] eq "restart";
 	install;
+	rebuild;
+}
+elsif (@ARGV && ($ARGV[0] eq "stop")) {
+    print "Stopping hosts script...";
+    rebuild;
 }
 else {
 	rebuild;
