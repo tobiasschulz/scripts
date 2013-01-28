@@ -1,5 +1,6 @@
 #!/usr/bin/perl
-### BEGIN INIT INFO
+
+my $lsb = q{### BEGIN INIT INFO
 # Provides:       hosts
 # Required-Start: $network $remote_fs $syslog
 # Required-Stop:  $network $remote_fs $syslog
@@ -7,6 +8,7 @@
 # Default-Stop:   0 1 6
 # Description:    Host Availability Script
 ### END INIT INFO
+};
 
 use strict;
 use warnings;
@@ -241,7 +243,7 @@ sub install {
 	{
 		system("rm /etc/init.d/hosts");
 		open my $f, ">", "/etc/init.d/hosts";
-		print $f qq{#!/bin/bash\n$0 }.q{$*}.qq{\n};
+		print $f "#!/bin/bash\n".$lsb."\n".$0.'$*'."\n";
 		close $f;
 		system("chmod 0777 /etc/init.d/hosts");
 		system("update-rc.d hosts defaults 2>&1 | grep -v 'already exist'");
