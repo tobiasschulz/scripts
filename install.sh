@@ -30,11 +30,11 @@ hosts install
 
 # update-motd.d script
 
-cp $P/update-motd.d_00-header /etc/update-motd.d/00-header
+cp -a $P/update-motd.d_00-header /etc/update-motd.d/00-header
 
 # bash profile
 
-cp $P/profile /etc/profile
+cp -a $P/profile /etc/profile
 
 # dnsmasq config
 
