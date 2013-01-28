@@ -203,11 +203,11 @@ sub sync {
 		chomp $ip;
 		for my $dir (qw(/etc/tinc/tobiasschulz/hosts/ /etc/hosts.d/)) {
 			if (@arg) {
-				system("nc -z $ip 22 && (rsync -zav $ip:$dir $dir ; rsync -zav $dir $ip:$dir)");
+				system("nc -z $ip 22 && nc -z $ip 53 && (rsync -zav $ip:$dir $dir ; rsync -zav $dir $ip:$dir)");
 			}
 			else {
-				system("nc -z $ip 22 && rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $ip:$dir $dir 2>/dev/null");
-				system("nc -z $ip 22 && rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $dir $ip:$dir 2>/dev/null");
+				system("nc -z $ip 22 && nc -z $ip 53 && rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $ip:$dir $dir 2>/dev/null");
+				system("nc -z $ip 22 && nc -z $ip 53 && rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $dir $ip:$dir 2>/dev/null");
 			}
 		}
 	}
