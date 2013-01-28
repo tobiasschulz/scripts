@@ -83,7 +83,10 @@ sub padding {
 
 sub check {
     my %hosts = hosts();
-    for my $host (sort keys %hosts) {
+    for my $host (
+    		sort { [split(/\./, $hosts{$b})]->[0] <=> [split(/\./, $hosts{$a})]->[0] }
+    		sort { [split(/\./, $hosts{$a})]->[3] <=> [split(/\./, $hosts{$b})]->[3] }
+    		keys %hosts) {
         my $ip = $hosts{$host};
         
         my $ping = ping_ms($ip);
@@ -237,6 +240,9 @@ elsif (@ARGV && $ARGV[0] eq "list") {
 	list;
 }
 elsif (@ARGV && $ARGV[0] eq "check") {
+	check;
+}
+elsif (@ARGV && $ARGV[0] eq "status") {
 	check;
 }
 elsif (@ARGV && $ARGV[0] eq "install") {
