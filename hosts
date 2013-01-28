@@ -240,7 +240,7 @@ sub install {
 	}
 	{
 		system("rm /etc/init.d/hosts");
-		open my $f, ">", "/etc/resolv.conf";
+		open my $f, ">", "/etc/init.d/hosts";
 		print $f qq{#!/bin/bash\n$0 }.q{$*}.qq{\n};
 		close $f;
 		system("chmod 0777 /etc/init.d/hosts");
