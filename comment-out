@@ -16,7 +16,7 @@ for my $file (@files) {
 	close $f;
 
 	foreach my $line (@lines) {
-		$line = "#" . $line if $line =~/$text/;
+		$line = "#" . $line if $line !~ /^[#]/ && $line =~/$text/;
 	}
 
 	open $f, ">", $file;
