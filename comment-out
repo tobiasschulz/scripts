@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+
+my ($file, $text) = @ARGV;
+
+if (!$file || !$text) {
+	print "comment-out: bad arguments.\n";
+	exit 1;
+}
+
+open my $f, "<", $file;
+if (!-f $file) {
+	print "comment-out: bad file.\n";
+	exit 1;
+}
+my @lines = <$f>;
+close $f;
+
+foreach my $line (@lines) {
+	$line = "#" . $line if $line =~/$text/;
+}
+
+open $f, ">", $file;
+print $f join('', @lines);
+close $f;
