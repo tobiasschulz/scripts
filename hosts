@@ -218,10 +218,11 @@ sub install {
 		return;
 	}
 		
-	system("mv /etc/crontab /etc/crontab.bak; grep -v $0 /etc/crontab.bak > /etc/crontab");
 	{
+		system("mv /etc/crontab /etc/crontab.bak; grep -v $0 /etc/crontab.bak > /etc/crontab");
 		open my $f, ">>", "/etc/crontab";
 		print $f '*/5 * * * * root $(dirname '.$0.')/update-motd'."\n";
+		print $f '*/5 * * * * root $(dirname '.$0.')/set-hostname $(cat /etc/hosts.this)'."\n";
 		print $f '0 * * * * root '.$0.' sync'."\n";
 		close $f;
 	}
@@ -230,17 +231,22 @@ sub install {
 		open my $f, ">", "/etc/update-motd.d/10-hosts";
 		print $f q{echo; }.$0.q{ check | perl -n -e 'print "  "; print;' 2>/dev/null}.qq{\n};
 		close $f;
+		system("chmod 0777 /etc/update-motd.d/10-hosts");
 	}
-	system("chmod 0777 /etc/update-motd.d/10-hosts");
-	system("rm /etc/resolv.conf");
 	{
+		system("rm /etc/resolv.conf");
 		open my $f, ">", "/etc/resolv.conf";
 		print $f qq{nameserver 127.0.1.1\n};
 		close $f;
 	}
-	system("rm /etc/init.d/hosts");
-	system("ln -sf $0 /etc/init.d/hosts");
-	system("update-rc.d hosts defaults 2>&1 | grep -v 'already exist'");
+	{
+		system("rm /etc/init.d/hosts");
+		open my $f, ">", "/etc/resolv.conf";
+		print $f qq{#!/bin/bash\n$0 }.q{$*}.qq{\n};
+		close $f;
+		system("chmod 0777 /etc/init.d/hosts");
+		system("update-rc.d hosts defaults 2>&1 | grep -v 'already exist'");
+	}
 	system("comment-out pam_motd.so /etc/pam.d/*");
 }
 
