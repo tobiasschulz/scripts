@@ -7,3 +7,4 @@ rm -f /var/run/motd
 	>> /var/run/motd
 [ -f /etc/motd.tail ] && cat /etc/motd.tail >> /var/run/motd
 
+exit 0
