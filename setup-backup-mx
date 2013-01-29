@@ -1,0 +1,27 @@
+#!/bin/bash
+
+cd $(dirname $0)
+export P=$(pwd)
+
+rsync -zavP $P/postfix-backupmx/ /etc/postfix/ --delete
+
+echo
+cat /etc/mailname | egrep "...." >/dev/null 2>&1 || echo 'Put your domain name in /etc/mailname!'
+
+cat > /etc/aliases << EOT
+cat /etc/aliases
+# See man 5 aliases for format
+postmaster: admin
+hostmaster: admin
+webmaster: admin
+root: admin
+abuse: admin
+spam: admin
+fail2ban: admin
+EOT
+
+test -d /home/admin || (
+	adduser admin
+	adduser admin root
+	adduser admin mail
+)
