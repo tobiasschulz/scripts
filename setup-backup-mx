@@ -25,7 +25,7 @@ fail2ban: admin
 EOT
 
 test -d /home/admin || (
-	adduser admin
+	adduser admin || (delgroup admin; adduser admin)
 	adduser admin root
 	adduser admin mail
 )
