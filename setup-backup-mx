@@ -28,6 +28,7 @@ test -d /home/admin || (
 	adduser admin || (delgroup admin; adduser admin)
 	adduser admin root
 	adduser admin mail
+	adduser admin sudo
 )
 
 newaliases
