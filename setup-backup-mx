@@ -29,6 +29,7 @@ test -d /home/admin || (
 	adduser admin root
 	adduser admin mail
 	adduser admin sudo
+	visudo
 )
 
 newaliases
