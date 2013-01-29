@@ -143,18 +143,27 @@ sub check_ports {
 	my %ports = (
 			21 => "ftp", 22 => "ssh", 25 => "smtp", 80 => "http", 143 => "imap", 
 			443 => "https", 465 => "smtps", 993 => "imaps", 53 => "dns",
-			10011 => "teamspeak",
-#			25565 => "minecraft", 10011 => "teamspeak",
+			25565 => "minecraft", 10011 => "teamspeak",
+			3306 => "mysql",
 			5900 => "vnc:0", 5901 => "vnc:1", 5902 => "vnc:2", 5903 => "vnc:3", 5904 => "vnc:4", 5905 => "vnc:5",
 	);
 	
+	my $portlist = join(",", keys %ports);
+	my $output = `nmap -sS -oG - -p T:$portlist $ip 2>&1 | egrep '(Ports:)|(root privileges)'`;
 	my @running = ();
 	
-	for my $port (keys %ports) {
-		my $service = $ports{$port};
-		if (`nc -z $ip $port && echo true` =~ /true/) {
-			push @running, $service;
+	if ($output =~ /root privileges/) {
+		for my $port (keys %ports) {
+			my $service = $ports{$port};
+			if (`nc -z $ip $port && echo true` =~ /true/) {
+				push @running, $service;
+			}
 		}
+	}
+	else {
+		$output =~ s/^(.*?)Ports..//igm;
+		my @scanresult = map { s/\s+//igm; $_ } split(/,/, $output);
+		@running = map { $ports{$_} } map { [split(/\//, $_)]->[0] } grep {/open/} @scanresult;
 	}
 	
 	return @running;
