@@ -30,3 +30,6 @@ test -d /home/admin || (
 	adduser admin root
 	adduser admin mail
 )
+
+newaliases
+service postfix restart
