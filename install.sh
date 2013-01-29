@@ -19,7 +19,7 @@ do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $pkg
 done
 
-for pkg in tinc update-motd netcat-openbsd landscape-common dnsmasq dnsutils
+for pkg in tinc update-motd netcat-openbsd landscape-common dnsmasq dnsutils fail2ban
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
 done
