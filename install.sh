@@ -14,7 +14,7 @@ done
 
 # install packages
 
-for pkg in bind9
+for pkg in bind9 sendmail-base sendmail-bin sendmail-cf sendmail-doc
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $pkg
 done
