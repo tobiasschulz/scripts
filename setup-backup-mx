@@ -14,7 +14,6 @@ echo
 cat /etc/mailname | egrep "...." >/dev/null 2>&1 || echo 'Put your domain name in /etc/mailname!'
 
 cat > /etc/aliases << EOT
-cat /etc/aliases
 # See man 5 aliases for format
 postmaster: admin
 hostmaster: admin
