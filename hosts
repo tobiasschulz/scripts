@@ -130,7 +130,7 @@ sub check {
 
 sub ping_ms {
 	my ($ip) = @_;
-	my $line = `ping -c 1 $ip | grep time=`;
+	my $line = `ping -w 2 -c 1 $ip | grep time=`;
 	if ($line =~ /time=(.*?)$/) {
 		my $ms = $1;
 		chomp $ms;
