@@ -1,0 +1,20 @@
+#!/bin/bash
+
+cd $(dirname $0)
+export P=$(pwd)
+
+cd
+
+test -f tinc-1.1pre5.tar.gz || (
+	wget http://www.tinc-vpn.org/packages/tinc-1.1pre5.tar.gz
+	tar xzvf tinc-1.1pre5.tar.gz
+)
+
+cd tinc-1.1pre5
+
+make clean
+./configure --prefix=/ --exec-prefix=/usr
+make
+make install
+
+cp -a $P/init.d_tinc /etc/init.d/tinc
