@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+$| = 1;
+
 my $lsb = q{### BEGIN INIT INFO
 # Provides:       hosts
 # Required-Start: $network $remote_fs $syslog
@@ -97,9 +99,8 @@ sub check {
     		sort { [split(/\./, $hosts{$b})]->[0] <=> [split(/\./, $hosts{$a})]->[0] }
     		sort { [split(/\./, $hosts{$a})]->[3] <=> [split(/\./, $hosts{$b})]->[3] }
     		keys %hosts) {
+
         my $ip = $hosts{$host};
-        
-        my $ping = ping_ms($ip);
         
         local $Term::ANSIColor::AUTORESET = 1;
         print BLUE "$host";
@@ -108,6 +109,8 @@ sub check {
         print YELLOW "$ip";
         print "): ";
         print padding($ip, 15);
+        
+        my $ping = ping_ms($ip);
         
         if ($ping) {
         	print BOLD GREEN "up";
@@ -149,7 +152,7 @@ sub check_ports {
 	);
 	
 	my $portlist = join(",", keys %ports);
-	my $output = `nmap -sS -oG - -p T:$portlist $ip 2>&1 | egrep '(Ports:)|(root privileges)'`;
+	my $output = `nmap --host-timeout=500 -sS -oG - -p T:$portlist $ip 2>&1 | egrep '(Ports:)|(root privileges)'`;
 	my @running = ();
 	
 	if ($output =~ /root privileges/) {
