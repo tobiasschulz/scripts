@@ -3,6 +3,11 @@
 cd $(dirname $0)
 export P=$(pwd)
 
+for pkg in build-essential liblzo2-dev texinfo libncurses5-dev libreadline-dev
+do
+	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
+done
+
 cd
 
 test -f tinc-1.1pre5.tar.gz || (
