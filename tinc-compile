@@ -18,3 +18,5 @@ make
 make install
 
 cp -a $P/init.d_tinc /etc/init.d/tinc
+
+service tinc restart
