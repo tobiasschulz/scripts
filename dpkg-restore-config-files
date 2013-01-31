@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for x in $*
+do
+	apt-get -o Dpkg::Options::="--force-confmiss" install --reinstall $x
+done
