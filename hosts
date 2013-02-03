@@ -121,15 +121,12 @@ sub check {
 	        
 	        my @services = sort(check_ports($ip));
 	        
-            print " (";
             if (@services) {
+	            print " (";
 	            print join(", ", @services);
 	            set_services($host, @services);
+	            print ")";
 	        }
-	        else {
-	        	print "-";
-	        }
-            print ")";
         }
         else {
         	print BOLD RED "down";
