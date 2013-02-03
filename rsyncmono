@@ -7,4 +7,4 @@ shift
 
 (
 rsync --hard-links --human-readable -azvl --size-only "$a/" "$b/" $* --exclude "*.unison.*" 2>&1
-)| grep -v "incremental file list" | perl -n -e 'print if !/^(sent|(total size)|DropBear)/;' | egrep -v "^$"
+)| grep -v "incremental file list" | perl -n -e 'print if !/^(sent|(total size)|(.*?DropBear))/;' | egrep -v "^$"

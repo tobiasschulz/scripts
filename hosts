@@ -266,10 +266,10 @@ sub sync {
 	if (!$args{"pull"} && !$args{"push"}) {
 		%args = (%args, "pull" => 1, "push" => 1);
 	}
-	my $pre = "rsyncmono -zav ";
+	my $pre = "rsyncmono ";
 	my $post = "";
 	if ($args{"quiet"}) {
-		$pre = "rsyncmono -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za ";
+		$pre = "rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za ";
 		$post = " 2>/dev/null";
 	}
 	
@@ -285,11 +285,11 @@ sub sync {
 			
 			if ($args{"push"}) {
 				print "$localdir -> $host:$remotedir\n";
-				system("echo nc -z $ip 22 && " . $pre . $localdir . "/ " . $host . ":" . $remotedir . "/" . $post);
+				system("nc -z $ip 22 && " . $pre . $localdir . "/ " . $host . ":" . $remotedir . "/" . $post);
 			}
 			if ($args{"pull"}) {
 				print "$host:$remotedir -> $localdir\n";
-				system("echo nc -z $ip 22 && " . $pre . $host . ":" . $remotedir . "/ " . $localdir . "/" . $post);
+				system("nc -z $ip 22 && " . $pre . $host . ":" . $remotedir . "/ " . $localdir . "/" . $post);
 			}
 		}
 	}
