@@ -37,7 +37,7 @@ sub rebuild {
 	$hosts =~ s/^\s+//igm;
 	$hosts =~ s/\s+$//igm;
 
-	open $f, ">", "/etc/hosts";
+	open $f, ">", "/etc/hosts" or return; # exit if not root!
 	print $f $hosts."\n\n" if $hosts;
 	
 	my $hostname = hostname();
@@ -93,7 +93,7 @@ sub padding {
 	}
 }
 
-sub check {
+sub status {
     my %hosts = hosts();
     my @hostnames = sort { [split(/\./, $hosts{$b})]->[0] <=> [split(/\./, $hosts{$a})]->[0] }
                     sort { [split(/\./, $hosts{$a})]->[3] <=> [split(/\./, $hosts{$b})]->[3] }
@@ -196,7 +196,7 @@ sub hosts {
 sub services {
 	my %services = ();
 	my %ips = hosts();
-    for my $host (split /\s+/, `cd /etc/hosts.d/; ls`) {
+    for my $host (keys %ips) {
         chomp $host;
         open my $h, "<", "/etc/hosts.d/".$host."/services" or next;
         my @s = <$h>;
@@ -239,22 +239,57 @@ sub add {
 	}
 }
 
+sub sync_dirs {
+	my %syncdirs = ();
+	my %ips = hosts();
+    for my $host (keys %ips) {
+        chomp $host;
+        open my $h, "<", "/etc/hosts.d/".$host."/sync" or next;
+        my %dirs = ();
+        for my $line (<$h>) {
+        	if ($line =~ /^([^\s]+?)\s*?[=]\s*(.*)\s*/) {
+        		$dirs{$1} = $2;
+        	}
+        }
+        close $h;
+        $syncdirs{$ips{$host}} = $syncdirs{$host} = {%dirs};
+    }
+    return %syncdirs;
+}
+
 sub sync {
-	my @arg = @_;
+	my %args = map {$_ => 1} @_;
 	my %hosts = hosts();
 	my %services = services();
+	my %syncdirs = sync_dirs();
+	
+	if (!$args{"pull"} && !$args{"push"}) {
+		%args = (%args, "pull" => 1, "push" => 1);
+	}
+	my $pre = "rsyncmono -zav ";
+	my $post = "";
+	if ($args{"quiet"}) {
+		$pre = "rsyncmono -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za ";
+		$post = " 2>/dev/null";
+	}
+	
 	for my $host (keys %hosts) {
 		next if (!$services{$host}{"ssh"});
+		next if $host eq hostname();
 		
 		my $ip = $hosts{$host};
-		for my $dir (qw(/etc/tinc/tobiasschulz/hosts/ /etc/hosts.d/)) {
-			if (@arg) {
-				print "$host ($ip):\n";
-				system("nc -z $ip 22 && nc -z $ip 53 && (rsync -zav $ip:$dir $dir ; rsync -zav $dir $ip:$dir)");
+		for my $dir (keys %{$syncdirs{hostname()}}) {
+			my $localdir = $syncdirs{hostname()}->{$dir};
+			my $remotedir = $syncdirs{$ip}->{$dir};
+			next if !$remotedir;
+			
+			if ($args{"push"}) {
+				print "$localdir -> $host:$remotedir\n";
+				system("echo nc -z $ip 22 && " . $pre . $localdir . "/ " . $host . ":" . $remotedir . "/" . $post);
 			}
-			else {
-				system("nc -z $ip 22 && nc -z $ip 53 && rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $ip:$dir $dir 2>/dev/null");
-				system("nc -z $ip 22 && nc -z $ip 53 && rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za $dir $ip:$dir 2>/dev/null");
+			if ($args{"pull"}) {
+				print "$host:$remotedir -> $localdir\n";
+				system("echo nc -z $ip 22 && " . $pre . $host . ":" . $remotedir . "/ " . $localdir . "/" . $post);
 			}
 		}
 	}
@@ -276,7 +311,7 @@ sub install {
 	unlink("/etc/update-motd.d/10-help-text");
 	{
 		open my $f, ">", "/etc/update-motd.d/10-hosts";
-		print $f q{echo; }.$0.q{ check | perl -n -e 'print "  "; print;' 2>/dev/null}.qq{\n};
+		print $f q{echo; }.$0.q{ status | perl -n -e 'print "  "; print;' 2>/dev/null}.qq{\n};
 		close $f;
 		system("chmod 0777 /etc/update-motd.d/10-hosts");
 	}
@@ -310,8 +345,8 @@ elsif (@ARGV && $ARGV[0] eq "sync") {
 elsif (@ARGV && $ARGV[0] eq "list") {
 	list;
 }
-elsif (@ARGV && ($ARGV[0] eq "status" || $ARGV[0] eq "check")) {
-	check;
+elsif (@ARGV && $ARGV[0] eq "status") {
+	status;
 }
 elsif (@ARGV && ($ARGV[0] eq "start" || $ARGV[0] eq "restart" || $ARGV[0] eq "install")) {
     print "Starting hosts script...\n" if $ARGV[0] eq "start";

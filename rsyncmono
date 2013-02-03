@@ -6,6 +6,5 @@ export b=$1
 shift
 
 (
-echo "$a -> $b"
-rsync --stats --hard-links --human-readable -azvl --size-only "$a/" "$b/" $* --exclude "*.unison.*"
-)| grep -v "sending incremental file list" #| perl -n -e 'print if !/^(sent|(total size))/;'
+rsync --hard-links --human-readable -azvl --size-only "$a/" "$b/" $* --exclude "*.unison.*" 2>&1
+)| grep -v "incremental file list" | perl -n -e 'print if !/^(sent|(total size)|DropBear)/;' | egrep -v "^$"
