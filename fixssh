@@ -2,7 +2,7 @@
 
 # If the ssh config has got wrong permissions
 
-chmod 660 ~/.ssh/config
+chmod 600 ~/.ssh/config
 chmod 700 ~/.ssh
 chmod 600 ~/.ssh/id_rsa
 chmod 644 ~/.ssh/id_rsa.pub
