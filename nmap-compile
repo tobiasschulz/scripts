@@ -1,0 +1,23 @@
+#!/bin/bash
+
+cd $(dirname $0)
+export P=$(pwd)
+
+for pkg in build-essential
+do
+	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
+done
+
+cd
+
+test -f nmap-6.25.tar.bz2 || (
+	wget http://nmap.org/dist/nmap-6.25.tar.bz2
+	bzip2 -cd nmap-6.25.tar.bz2 | tar xvf -
+)
+cd nmap-6.25
+
+make clean
+./configure --prefix=/usr --exec-prefix=/usr
+make
+make install
+
