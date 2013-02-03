@@ -95,11 +95,13 @@ sub padding {
 
 sub check {
     my %hosts = hosts();
-    for my $host (
-    		sort { [split(/\./, $hosts{$b})]->[0] <=> [split(/\./, $hosts{$a})]->[0] }
-    		sort { [split(/\./, $hosts{$a})]->[3] <=> [split(/\./, $hosts{$b})]->[3] }
-    		keys %hosts) {
+    my @hostnames = sort { [split(/\./, $hosts{$b})]->[0] <=> [split(/\./, $hosts{$a})]->[0] }
+                    sort { [split(/\./, $hosts{$a})]->[3] <=> [split(/\./, $hosts{$b})]->[3] }
+                    keys %hosts;
 
+    my %ping_ms = ping_ms(map {$hosts{$_}} @hostnames);
+
+    for my $host (@hostnames) {
         my $ip = $hosts{$host};
         
         local $Term::ANSIColor::AUTORESET = 1;
@@ -110,15 +112,23 @@ sub check {
         print "): ";
         print padding($ip, 15);
         
-        my $ping = ping_ms($ip);
+        my $ping = $ping_ms{$ip};
         
         if ($ping) {
         	print BOLD GREEN "up";
-        	print MAGENTA " ".$ping;
+        	print MAGENTA " ".$ping." ms";
 	        print padding($ping, 8);
-
+	        
+	        my @services = sort(check_ports($ip));
+	        
             print " (";
-            print join(", ", sort(check_ports($ip)));
+            if (@services) {
+	            print join(", ", @services);
+	            set_services($host, @services);
+	        }
+	        else {
+	        	print "-";
+	        }
             print ")";
         }
         else {
@@ -129,16 +139,16 @@ sub check {
 }
 
 sub ping_ms {
-	my ($ip) = @_;
-	my $line = `ping -w 2 -c 1 $ip | grep time=`;
-	if ($line =~ /time=(.*?)$/) {
-		my $ms = $1;
-		chomp $ms;
-		return $ms;
+	my (@ips) = @_;
+	my $ips_arg = join(" ", @ips);
+	my $output = `fping -c1 -t500 $ips_arg 2>/dev/null`;
+	my %ping_ms = ();
+	for my $line (split(/[\r\n]+/, $output)) {
+		if ($line =~ /^([^\s]+?)\s.*?\s([^\s]+?)\sms\s/) {
+			$ping_ms{$1} = $2;
+		}
 	}
-	else {
-		return;
-	}
+	return %ping_ms;
 }
 
 sub check_ports {
@@ -176,13 +186,33 @@ sub hosts {
 	my %hosts = ();
     for my $host (split /\s+/, `cd /etc/hosts.d/; ls`) {
         chomp $host;
-        open my $h, "<", "/etc/hosts.d/".$host;
+        open my $h, "<", "/etc/hosts.d/".$host."/ip";
         my $ip = <$h>;
         chomp $ip;
         close $h;
         $hosts{$host} = $ip;
     }
     return %hosts;
+}
+
+sub services {
+	my %services = ();
+    for my $host (split /\s+/, `cd /etc/hosts.d/; ls`) {
+        chomp $host;
+        open my $h, "<", "/etc/hosts.d/".$host."/services";
+        my @s = <$h>;
+        close $h;
+        @s = split(/[^a-z0-9:]/, join(" ", @s));
+        $services{$host} = {map {$_ => 1} @s};
+    }
+    return %services;
+}
+
+sub set_services {
+    my ($host, @services) = @_;
+    open my $h, ">", "/etc/hosts.d/".$host."/services";
+    print $h join(" ", @services)."\n";
+    close $h;
 }
 
 sub add {
@@ -200,7 +230,8 @@ sub add {
 	    print "IP: " . $ip . "\n";
 	    print "Host: " . $host . "\n";
 	    
-	    open my $f, ">", "/etc/hosts.d/".$host;
+	    mkdir "/etc/hosts.d/".$host;
+	    open my $f, ">", "/etc/hosts.d/".$host."/ip";
 	    print $f $ip."\n";
 	    close $f;
 	}
@@ -212,7 +243,10 @@ sub add {
 sub sync {
 	my @arg = @_;
 	my %hosts = hosts();
+	my %services = services();
 	for my $host (keys %hosts) {
+		next if (!$services{$host}{"ssh"});
+		
 		my $ip = $hosts{$host};
 		for my $dir (qw(/etc/tinc/tobiasschulz/hosts/ /etc/hosts.d/)) {
 			if (@arg) {
