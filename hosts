@@ -100,6 +100,7 @@ sub check {
                     keys %hosts;
 
     my %ping_ms = ping_ms(map {$hosts{$_}} @hostnames);
+	my %services_hash = services();
 
     for my $host (@hostnames) {
         my $ip = $hosts{$host};
@@ -117,13 +118,13 @@ sub check {
         if ($ping) {
         	print BOLD GREEN "up";
         	print MAGENTA " ".$ping." ms";
-	        print padding($ping, 8);
+	        print padding($ping, 5);
 	        
-	        my @services = sort(check_ports($ip));
+	        my @services = $> ? (keys %{$services_hash{$ip}}) : check_ports($ip);
 	        
             if (@services) {
 	            print " (";
-	            print join(", ", @services);
+	            print join(", ", sort @services);
 	            set_services($host, @services);
 	            print ")";
 	        }
@@ -163,12 +164,12 @@ sub check_ports {
 	my @running = ();
 	
 	if ($output =~ /root privileges/) {
-		for my $port (keys %ports) {
-			my $service = $ports{$port};
-			if (`nc -z $ip $port && echo true` =~ /true/) {
-				push @running, $service;
-			}
-		}
+		#for my $port (keys %ports) {
+		#	my $service = $ports{$port};
+		#	if (`nc -z $ip $port && echo true` =~ /true/) {
+		#		push @running, $service;
+		#	}
+		#}
 	}
 	else {
 		$output =~ s/^(.*?)Ports..//igm;
@@ -194,20 +195,21 @@ sub hosts {
 
 sub services {
 	my %services = ();
+	my %ips = hosts();
     for my $host (split /\s+/, `cd /etc/hosts.d/; ls`) {
         chomp $host;
-        open my $h, "<", "/etc/hosts.d/".$host."/services";
+        open my $h, "<", "/etc/hosts.d/".$host."/services" or next;
         my @s = <$h>;
         close $h;
         @s = split(/[^a-z0-9:]/, join(" ", @s));
-        $services{$host} = {map {$_ => 1} @s};
+        $services{$ips{$host}} = $services{$host} = {map {$_ => 1} @s};
     }
     return %services;
 }
 
 sub set_services {
     my ($host, @services) = @_;
-    open my $h, ">", "/etc/hosts.d/".$host."/services";
+    open my $h, ">", "/etc/hosts.d/".$host."/services" or return;
     print $h join(" ", @services)."\n";
     close $h;
 }
