@@ -139,7 +139,7 @@ sub check {
 sub ping_ms {
 	my (@ips) = @_;
 	my $ips_arg = join(" ", @ips);
-	my $output = `fping -c1 -t1000 $ips_arg 2>/dev/null`;
+	my $output = `fping -c1 -t1200 $ips_arg 2>/dev/null`;
 	my %ping_ms = ();
 	for my $line (split(/[\r\n]+/, $output)) {
 		if ($line =~ /^([^\s]+?)\s.*?\s([^\s]+?)\sms\s/) {
