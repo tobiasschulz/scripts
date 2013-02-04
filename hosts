@@ -302,12 +302,12 @@ sub install {
 	}
 		
 	{
-		system("mv /etc/crontab /etc/crontab.bak; grep -v $0 /etc/crontab.bak > /etc/crontab");
+		system("mv /etc/crontab /etc/crontab.bak; grep -v $0 /etc/crontab.bak | grep -v HOSTS > /etc/crontab");
 		open my $f, ">>", "/etc/crontab";
-		print $f '*/5 * * * * root $(dirname '.$0.')/update-motd'."\n";
-		print $f '*/5 * * * * root $(dirname '.$0.')/tinc-graph /var/spool/hosts/tinc.png '."\n";
-		print $f '*/5 * * * * root /etc/init.d/tinc start # '.$0."\n";
-		print $f '0 * * * * root '.$0.' sync'."\n";
+		print $f '*/5 * * * * root $(dirname '.$0.')/update-motd'." # HOSTS\n";
+		print $f '*/5 * * * * root $(dirname '.$0.')/update-html'." # HOSTS\n";
+		print $f '*/5 * * * * root /etc/init.d/tinc start'." # HOSTS\n";
+		print $f '0 * * * * root '.$0.' sync'." # HOSTS \n";
 		close $f;
 	}
 	unlink("/etc/update-motd.d/10-help-text");

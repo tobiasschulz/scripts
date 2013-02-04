@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. /etc/environment
+
+cd /var/spool/hosts/
+
+tinc-graph tinc.png
+
+(
+	cat /etc/motd
+	echo "TINCPNG"
+) | aha --title $(hostname) \
+	| sed 's@TINCPNG@<img src="tinc.png" />@gm' \
+	> index.html
+
