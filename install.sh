@@ -19,7 +19,7 @@ do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $pkg
 done
 
-for pkg in tinc update-motd netcat-openbsd landscape-common dnsmasq dnsutils fail2ban rsync graphviz nmap fping
+for pkg in tinc update-motd netcat-openbsd landscape-common dnsmasq dnsutils fail2ban rsync graphviz nmap fping lighttpd
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
 done
@@ -43,6 +43,11 @@ cp -a $P/profile /etc/profile
 cp $P/dnsmasq.conf /etc/dnsmasq.conf
 rm -f /etc/dnsmasq.d/network-manager
 
+# lighttpd config
+
+mkdir /var/spool/hosts 2>/dev/null
+cat $P/lighttpd.conf | sed 's@HOSTNAME@'$(echo -n $(hostname))'.vpn@gm' > /etc/lighttpd/lighttpd.conf
+
 # setup update script
 
 echo '#!/bin/bash' > /usr/local/bin/pull-scripts
@@ -53,7 +58,7 @@ ln -f /usr/local/bin/pull-scripts /etc/cron.daily/pull-scripts
 
 # restart services
 
-for service in dnsmasq
+for service in dnsmasq lighttpd
 do
 	service $service restart
 done
