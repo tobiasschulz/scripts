@@ -28,7 +28,7 @@ fi
 
 for x in /etc/tinc/*/tinc.conf
 do
-	. $x
+	. $x >/dev/null 2>&1
 done
 
 echo
