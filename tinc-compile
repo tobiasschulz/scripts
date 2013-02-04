@@ -22,6 +22,6 @@ make clean
 make
 make install
 
-cp -a $P/init.d_tinc /etc/init.d/tinc
+rsync -av $P/tinc-extras/ /
 
 service tinc restart

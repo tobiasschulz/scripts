@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -e
+
+[ -z "$IF_TINC_NET" ] && exit 0
+
+# Read options from /etc/default
+
+. /etc/default/tinc
+
+# Read options from /etc/network/interfaces
+
+[ -n "$IF_TINC_CONFIG" ]          && EXTRA="$EXTRA -c $IF_TINC_CONFIG"
+[ -n "$IF_TINC_DEBUG" ]           && EXTRA="$EXTRA -d$IF_TINC_DEBUG"
+[ -n "$IF_TINC_MLOCK" ]           && EXTRA="$EXTRA --mlock"
+[ -n "$IF_TINC_LOGFILE" ]         && EXTRA="$EXTRA --logfile=$IF_TINC_LOGFILE"
+[ -n "$IF_TINC_PIDFILE" ]         && EXTRA="$EXTRA --pidfile=$IF_TINC_PIDFILE" || IF_TINC_PIDFILE=/var/run/tinc.$IF_TINC_NET.pid
+[ -n "$IF_TINC_CHROOT" ]          && EXTRA="$EXTRA --chroot"
+[ -n "$IF_TINC_USER" ]            && EXTRA="$EXTRA --user=$IF_TINC_USER"
+
+
+# Start tinc daemon
+
+/usr/sbin/tincd -n "$IF_TINC_NET" -o "Interface=$IFACE" $EXTRA
+
+# Wait for it to come up properly
+
+sleep 0.1
+i=0;
+while [ ! -f "$IF_TINC_PIDFILE" ] ; do
+	if [ $i = '30' ] ; then
+		echo 'Failed to start tinc daemon!'
+		exit 1
+	fi
+	sleep 0.1
+	i=$(($i+1))
+done
+
+exit 0
