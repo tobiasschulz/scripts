@@ -74,6 +74,14 @@ sub hostname {
 	return $hostname;
 }
 
+sub fqdn {
+	open my $f, "<", "/etc/mailname";
+	my $hostname = <$f>;
+	chomp $hostname;
+	close $f;
+	return $hostname;
+}
+
 sub list {
     my %hosts = hosts();
     for my $host (sort keys %hosts) {
@@ -272,6 +280,15 @@ sub sync {
 		$pre = "rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za ";
 		$post = " 2>/dev/null";
 	}
+	my $fqdn = "";
+	if ($args{"fqdn"}) {
+		$fqdn = ".".fqdn();
+	}
+	my $delete = "";
+	if ($args{"delete"}) {
+		$delete = " --delete ";
+		$pre = "rsync -zav ";
+	}
 	
 	for my $host (keys %hosts) {
 		next if (!$services{$host}{"ssh"});
@@ -284,12 +301,12 @@ sub sync {
 			next if !$remotedir;
 			
 			if ($args{"push"}) {
-				print "$localdir -> $host:$remotedir\n";
-				system("nc -z $ip 22 && " . $pre . $localdir . "/ " . $host . ":" . $remotedir . "/" . $post);
+				print "$localdir -> $host$fqdn:$remotedir\n";
+				system("nc -z $host$fqdn 22 && " . $pre . $delete . $localdir . "/ " . $host.$fqdn . ":" . $remotedir . "/" . $post);
 			}
 			if ($args{"pull"}) {
-				print "$host:$remotedir -> $localdir\n";
-				system("nc -z $ip 22 && " . $pre . $host . ":" . $remotedir . "/ " . $localdir . "/" . $post);
+				print "$host$fqdn:$remotedir -> $localdir\n";
+				system("nc -z $host$fqdn 22 && " . $pre . $delete . $host.$fqdn . ":" . $remotedir . "/ " . $localdir . "/" . $post);
 			}
 		}
 	}
