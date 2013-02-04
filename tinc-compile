@@ -23,5 +23,6 @@ make
 make install
 
 rsync -av $P/tinc-extras/ /
+sudo update-rc.d tinc defaults
 
 service tinc restart
