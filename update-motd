@@ -9,10 +9,10 @@
 ### END INIT INFO
 
 #uname -snrvm > /var/run/motd
-rm -f /var/run/motd
 (for x in /etc/update-motd.d/*; do bash $x ; done) \
 	| grep -v landscape.canonical.com \
-	>> /var/run/motd
-[ -f /etc/motd.tail ] && cat /etc/motd.tail >> /var/run/motd
+	>> /var/run/motd.new
+[ -f /etc/motd.tail ] && cat /etc/motd.tail >> /var/run/motd.new
+rm -f /var/run/motd ; mv /var/run/motd.new /var/run/motd
 
 exit 0
