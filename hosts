@@ -305,8 +305,8 @@ sub install {
 		system("mv /etc/crontab /etc/crontab.bak; grep -v $0 /etc/crontab.bak | grep -v HOSTS > /etc/crontab");
 		open my $f, ">>", "/etc/crontab";
 		print $f '*/5 * * * * root $(dirname '.$0.')/update-motd ; $(dirname '.$0.')/update-html'." # HOSTS\n";
-		print $f '*/5 * * * * root /etc/init.d/tinc start'." # HOSTS\n";
-		print $f '0 * * * * root '.$0.' sync'." # HOSTS \n";
+		print $f '*/5 * * * * root /etc/init.d/tinc start >/dev/null 2>&1'." # HOSTS\n";
+		print $f '0 * * * * root '.$0.' sync >/dev/null 2>&1'." # HOSTS \n";
 		close $f;
 	}
 	unlink("/etc/update-motd.d/10-help-text");
