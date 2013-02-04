@@ -14,15 +14,18 @@ done
 
 # install packages
 
-for pkg in bind9 sendmail-base sendmail-bin sendmail-cf sendmail-doc rmail
+for pkg in bind9 sendmail-base sendmail-bin sendmail-cf sendmail-doc rmail tinc nmap
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $pkg
 done
 
-for pkg in tinc update-motd netcat-openbsd landscape-common dnsmasq dnsutils fail2ban rsync graphviz nmap fping lighttpd aha
+for pkg in update-motd netcat-openbsd landscape-common dnsmasq dnsutils fail2ban rsync graphviz fping lighttpd aha
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
 done
+
+test -f /usr/sbin/tincd || tinc-compile
+test -f /usr/bin/nmap || nmap-compile
 
 # hosts availability script
 
