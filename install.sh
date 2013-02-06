@@ -12,6 +12,18 @@ do
 	chmod u=rwx,g=rx,o=rx $P/$x
 done
 
+# install packages
+
+for pkg in bind9 sendmail-base sendmail-bin sendmail-cf sendmail-doc rmail tinc nmap
+do
+	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $pkg
+done
+
+for pkg in netcat-openbsd dnsutils rsync graphviz fping aha
+do
+	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
+done
+
 # setup update script
 
 echo '#!/bin/bash' > /usr/local/bin/pull-scripts
@@ -31,7 +43,7 @@ do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $pkg
 done
 
-for pkg in update-motd netcat-openbsd landscape-common dnsmasq dnsutils fail2ban rsync graphviz fping lighttpd aha
+for pkg in update-motd landscape-common dnsmasq fail2ban lighttpd
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
 done
