@@ -1,0 +1,60 @@
+#! /bin/sh
+#
+### BEGIN INIT INFO
+# Provides:          virt
+# Required-Start:    $remote_fs $network
+# Required-Stop:     $remote_fs $network
+# Should-Start:      $syslog $named
+# Should-Stop:       $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start virtual chroot environments
+# Description:       Start virtual chroot environments
+### END INIT INFO
+
+export VDIR=/data/virtual/
+export VHOSTS=$(cd $VDIR; echo *)
+
+start() {
+  for v in $VHOSTS
+  do
+    echo "Starting chroot: "$v
+    chroot-up $v
+  done
+}
+stop() {
+  for v in $VHOSTS
+  do
+    echo "Stopping chroot: "$v
+    chroot-down $v
+  done
+}
+reload() {
+  stop
+  start
+}
+restart() {
+  stop
+  start
+}
+
+case "$1" in
+  start)
+    start
+  ;;
+  stop)
+    stop
+  ;;
+  reload|force-reload)
+    reload
+  ;;
+  restart)
+    restart
+  ;;
+  *)
+    echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload}"
+    exit 1
+  ;;
+esac
+
+exit 0

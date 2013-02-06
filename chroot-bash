@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ "x$1" = "x" ]
+then
+    exit 0
+fi
+
+export D=/data/$1
+test -d $D || exit 0
+
+test -f $D/proc/cpuinfo || chroot-up $1
+
+chroot $D /bin/bash
+

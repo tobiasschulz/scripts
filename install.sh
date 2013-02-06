@@ -51,6 +51,11 @@ rm -f /etc/dnsmasq.d/network-manager
 mkdir /var/spool/hosts 2>/dev/null
 cat $P/lighttpd.conf | sed 's@HOSTNAME@'$(echo -n $(hostname))'.vpn@gm' > /etc/lighttpd/lighttpd.conf
 
+# chroot scripts
+
+rsync -zav $P/chroots/ /
+ln -sf $P/chroot-bash /usr/local/bin/cbash
+
 # setup update script
 
 echo '#!/bin/bash' > /usr/local/bin/pull-scripts
