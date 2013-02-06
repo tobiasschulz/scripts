@@ -5,7 +5,7 @@ then
     exit 0
 fi
 
-export D=/data/$1
+export D=/data/chroot/$1
 test -d $D || exit 0
 
 export MOUNT="/proc /sys /dev /dev/pts /home /tmp"
