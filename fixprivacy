@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -f $HOME/.local/share/recently-used.xbel
+mkdir -p $HOME/.local/share/recently-used.xbel
+
