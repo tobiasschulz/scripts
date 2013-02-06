@@ -22,7 +22,7 @@ ln -f /usr/local/bin/pull-scripts /etc/cron.daily/pull-scripts
 
 # dont't do a full install if in a chroot environment!
 
-test -f /etc/vhost && echo 0
+test -f /etc/vhost && exit 0
 
 # install packages
 
