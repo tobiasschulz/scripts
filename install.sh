@@ -12,6 +12,18 @@ do
 	chmod u=rwx,g=rx,o=rx $P/$x
 done
 
+# setup update script
+
+echo '#!/bin/bash' > /usr/local/bin/pull-scripts
+echo 'sudo su -c "'$P'/update.sh"' >> /usr/local/bin/pull-scripts
+chown root:root /usr/local/bin/pull-scripts
+chmod u=rwx,g=rx,o=rx /usr/local/bin/pull-scripts
+ln -f /usr/local/bin/pull-scripts /etc/cron.daily/pull-scripts
+
+# dont't do a full install if in a chroot environment!
+
+test -f /etc/vhost && echo 0
+
 # install packages
 
 for pkg in bind9 sendmail-base sendmail-bin sendmail-cf sendmail-doc rmail tinc nmap
@@ -55,14 +67,6 @@ cat $P/lighttpd.conf | sed 's@HOSTNAME@'$(echo -n $(hostname))'.vpn@gm' > /etc/l
 
 cp -ra $P/chroots/* /
 ln -sf $P/chroot-bash /usr/local/bin/cbash
-
-# setup update script
-
-echo '#!/bin/bash' > /usr/local/bin/pull-scripts
-echo 'sudo su -c "'$P'/update.sh"' >> /usr/local/bin/pull-scripts
-chown root:root /usr/local/bin/pull-scripts
-chmod u=rwx,g=rx,o=rx /usr/local/bin/pull-scripts
-ln -f /usr/local/bin/pull-scripts /etc/cron.daily/pull-scripts
 
 # restart services
 
