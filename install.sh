@@ -53,7 +53,7 @@ cat $P/lighttpd.conf | sed 's@HOSTNAME@'$(echo -n $(hostname))'.vpn@gm' > /etc/l
 
 # chroot scripts
 
-rsync -zav $P/chroots/ /
+cp -ra $P/chroots/* /
 ln -sf $P/chroot-bash /usr/local/bin/cbash
 
 # setup update script
