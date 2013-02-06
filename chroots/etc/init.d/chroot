@@ -12,7 +12,7 @@
 # Description:       Start virtual chroot environments
 ### END INIT INFO
 
-export VDIR=/data/virtual/
+export VDIR=/data/chroot/
 export VHOSTS=$(cd $VDIR; echo *)
 
 start() {
