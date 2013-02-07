@@ -19,7 +19,7 @@ do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $pkg
 done
 
-for pkg in netcat-openbsd dnsutils rsync graphviz fping aha
+for pkg in netcat-openbsd dnsutils rsync graphviz fping aha ufw
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
 done
