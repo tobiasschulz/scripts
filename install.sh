@@ -65,6 +65,10 @@ update-rc.d update-motd defaults 2>&1 | grep -v 'already exist'
 
 cp -a $P/profile /etc/profile
 
+# openssh config
+
+cp -ra $P/ssh/* /
+
 # dnsmasq config
 
 cp $P/dnsmasq.conf /etc/dnsmasq.conf
