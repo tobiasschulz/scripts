@@ -1,0 +1,25 @@
+#!/bin/bash
+
+ufw disable
+ufw logging on
+ufw default deny
+ufw allow 2200/tcp # ssh
+ufw allow 80/tcp # http
+ufw allow 443/tcp # https
+ufw allow 80/tcp # http
+ufw allow proto tcp from 192.168.100.0/24 to any port 8001 # lighttpd
+ufw allow 25/tcp # smtp
+ufw allow 465/tcp # smtps
+ufw allow 143/tcp # imap
+ufw allow 993/tcp # imaps
+ufw allow from 192.168.100.0/24 to any port 53 # dns
+ufw allow 25565/tcp # minecraft
+ufw allow proto tcp from 192.168.100.0/24 to any port 21 # ftp
+ufw enable
+
+
+# 21 => "ftp", 22 => "ssh", 25 => "smtp", 80 => "http", 143 => "imap",
+# 443 => "https", 465 => "smtps", 993 => "imaps", 53 => "dns", 8001 => "lighttpd",
+# 25565 => "minecraft", 10011 => "teamspeak",
+# 3306 => "mysql",
+# 5900 => "vnc:0", 5901 => "vnc:1", 5902 => "vnc:2", 5903 => "vnc:3", 5904 => "vnc:4", 5905 => "vnc:5",
