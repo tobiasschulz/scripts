@@ -2,7 +2,7 @@
 
 ufw disable
 ufw logging on
-ufw default deny
+ufw default reject
 ufw allow 2200/tcp # ssh
 ufw allow 655 # tinc!
 ufw allow 80/tcp # http
