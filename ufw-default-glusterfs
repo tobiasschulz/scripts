@@ -1,7 +1,5 @@
 #!/bin/bash
 
-ufw disable
-ufw logging on
 ufw allow 111   # portmapper
 ufw allow 24007 # Gluster Daemon
 ufw allow 24008 # Infiniband management
@@ -20,4 +18,3 @@ ufw allow 24020
 ufw allow 34865 # inline Gluster NFS server
 ufw allow 34866
 ufw allow 34867
-ufw enable
