@@ -160,7 +160,8 @@ sub ping_ms {
 sub check_ports {
 	my ($ip) = @_;
 	my %ports = (
-			21 => "ftp", 22 => "ssh", 25 => "smtp", 80 => "http", 143 => "imap", 
+			21 => "ftp", 22 => "ssh:22", 25 => "smtp", 80 => "http", 143 => "imap", 2200 => "ssh:2200",
+			2201 => "ssh:2201", 2202 => "ssh:2202", 2203 => "ssh:2203",
 			443 => "https", 465 => "smtps", 993 => "imaps", 53 => "dns", 8001 => "lighttpd",
 			25565 => "minecraft", 10011 => "teamspeak",
 			3306 => "mysql",
@@ -291,7 +292,7 @@ sub sync {
 	}
 	
 	for my $host (keys %hosts) {
-		next if (!$services{$host}{"ssh"});
+		next if (!$services{$host}{"ssh:2200"});
 		next if $host eq hostname();
 		
 		my $ip = $hosts{$host};
@@ -302,11 +303,11 @@ sub sync {
 			
 			if ($args{"push"}) {
 				print "$localdir -> $host$fqdn:$remotedir\n";
-				system("nc -z $host$fqdn 22 && " . $pre . $delete . $localdir . "/ " . $host.$fqdn . ":" . $remotedir . "/" . $post);
+				system("nc -z $host$fqdn 2200 && " . $pre . $delete . $localdir . "/ " . $host.$fqdn . ":" . $remotedir . "/" . $post);
 			}
 			if ($args{"pull"}) {
 				print "$host$fqdn:$remotedir -> $localdir\n";
-				system("nc -z $host$fqdn 22 && " . $pre . $delete . $host.$fqdn . ":" . $remotedir . "/ " . $localdir . "/" . $post);
+				system("nc -z $host$fqdn 2200 && " . $pre . $delete . $host.$fqdn . ":" . $remotedir . "/ " . $localdir . "/" . $post);
 			}
 		}
 	}
