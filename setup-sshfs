@@ -14,7 +14,7 @@ echo -n > /etc/auto.master
 for basedir in "" $(for y in /data/chroot/*; do echo $y | grep -v '/data/chroot/*' ; done)
 do
 
-	export USERS=$(cd $basedir/; echo *)
+	export USERS=$(cd $basedir/home; echo *)
 	export HOSTS=$(cd /etc/hosts.d/; echo *)
 
 	for u in $USERS
