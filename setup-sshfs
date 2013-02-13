@@ -10,19 +10,23 @@ done
 
 mkdir -p /data/storage
 
-export USERS=$(cd /home/; echo *)
-export HOSTS=$(cd /etc/hosts.d/; echo *)
-
 echo -n > /etc/auto.master
-for u in $USERS
+for basedir in "" /data/chroot/*
 do
-	echo "/home/"$u"/remote /etc/auto.sshfs."$u" --timeout=30 --ghost --verbose" >> /etc/auto.master
-	echo -n > /etc/auto.sshfs.$u
 
-	for h in $HOSTS
+	export USERS=$(cd $basedir/; echo *)
+	export HOSTS=$(cd /etc/hosts.d/; echo *)
+
+	for u in $USERS
 	do
-		grep ssh:2200 /etc/hosts.d/$h/services >/dev/null 2>&1 && \
-			echo $h" -fstype=fuse,rw,nodev,nonempty,noatime,allow_other,reconnect,max_read=65536 :sshfs\#root@"$h"\:/home/"$u >> /etc/auto.sshfs.$u
+		echo $basedir"/home/"$u"/remote /etc/auto.sshfs."$u" --timeout=30 --ghost --verbose" >> /etc/auto.master
+		echo -n > /etc/auto.sshfs.$u
+
+		for h in $HOSTS
+		do
+			grep ssh:2200 /etc/hosts.d/$h/services >/dev/null 2>&1 && \
+				echo $h" -fstype=fuse,rw,nodev,nonempty,noatime,allow_other,reconnect,max_read=65536 :sshfs\#root@"$h"\:/home/"$u >> /etc/auto.sshfs.$u
+		done
 	done
 done
 
