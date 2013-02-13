@@ -11,7 +11,7 @@ done
 mkdir -p /data/storage
 
 echo -n > /etc/auto.master
-for basedir in "" /data/chroot/*
+for basedir in "" $(for y in /data/chroot/*; do echo $y | grep -v '/data/chroot/*' ; done)
 do
 
 	export USERS=$(cd $basedir/; echo *)
