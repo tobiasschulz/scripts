@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ `whoami` != root ]; then
+    echo $0 $* | sudo su -
+    exit 0
+fi
+
+apt-get install build-essential linux-headers-generic linux-headers-`uname -r`
+cd /usr/src
+wget -O- http://linuxwireless.org/download/compat-wireless-2.6/compat-wireless-2012-07-03-pc.tar.bz2 | tar -xj
+cd compat-wireless-2012-*
+./scripts/driver-select alx
+make
+make install
