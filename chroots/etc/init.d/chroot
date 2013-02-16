@@ -12,6 +12,7 @@
 # Description:       Start virtual chroot environments
 ### END INIT INFO
 
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
 export VDIR=/data/chroot/
 export VHOSTS=$(cd $VDIR; echo *)
 
