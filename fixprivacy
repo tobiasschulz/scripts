@@ -3,3 +3,5 @@
 rm -f $HOME/.local/share/recently-used.xbel
 mkdir -p $HOME/.local/share/recently-used.xbel
 
+sudo aptitude purge zeitgeist zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist geoclue geoclue-ubuntu-geoip geoip-database whoopsie
+
