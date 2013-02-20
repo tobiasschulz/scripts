@@ -84,6 +84,10 @@ cat $P/lighttpd.conf | sed 's@HOSTNAME@'$(echo -n $(hostname))'.vpn@gm' > /etc/l
 cp -ra $P/chroots/* /
 ln -sf $P/chroot-bash /usr/local/bin/cbash
 
+# magic sysrq
+
+echo "kernel.sysrq = 1" > /etc/sysctl.d/10-magic-sysrq.conf
+
 # restart services
 
 for service in dnsmasq lighttpd
