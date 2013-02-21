@@ -10,5 +10,6 @@ cd /usr/src
 wget -O- http://linuxwireless.org/download/compat-wireless-2.6/compat-wireless-2012-07-03-pc.tar.bz2 | tar -xj
 cd compat-wireless-2012-*
 ./scripts/driver-select alx
+sed -i 's@__netdev_printk@1;//@igm' drivers/net/ethernet/atheros/alx/alx_main.c
 make
 make install
