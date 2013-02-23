@@ -90,7 +90,7 @@ echo "kernel.sysrq = 1" > /etc/sysctl.d/10-magic-sysrq.conf
 
 # lm-sensors
 
-curl http://dl.lm-sensors.org/lm-sensors/files/sensors-detect 2>/dev/null > /usr/local/bin/sensors-detect
+test -f /usr/local/bin/sensors-detect || curl http://dl.lm-sensors.org/lm-sensors/files/sensors-detect 2>/dev/null > /usr/local/bin/sensors-detect
 
 # restart services
 
