@@ -19,7 +19,7 @@ do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $pkg
 done
 
-for pkg in netcat-openbsd dnsutils rsync graphviz fping aha ufw
+for pkg in netcat-openbsd dnsutils rsync graphviz fping aha ufw curl wget
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
 done
@@ -76,7 +76,7 @@ rm -f /etc/dnsmasq.d/network-manager
 
 # lighttpd config
 
-mkdir /var/spool/hosts 2>/dev/null
+mkdir -p /var/spool/hosts 2>/dev/null
 cat $P/lighttpd.conf | sed 's@HOSTNAME@'$(echo -n $(hostname))'.vpn@gm' > /etc/lighttpd/lighttpd.conf
 
 # chroot scripts
@@ -87,6 +87,10 @@ ln -sf $P/chroot-bash /usr/local/bin/cbash
 # magic sysrq
 
 echo "kernel.sysrq = 1" > /etc/sysctl.d/10-magic-sysrq.conf
+
+# lm-sensors
+
+curl http://dl.lm-sensors.org/lm-sensors/files/sensors-detect 2>/dev/null > /usr/local/bin/sensors-detect
 
 # restart services
 

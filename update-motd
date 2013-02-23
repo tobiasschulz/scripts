@@ -11,8 +11,8 @@
 #uname -snrvm > /var/run/motd
 (for x in /etc/update-motd.d/*; do bash $x ; done) \
 	| grep -v landscape.canonical.com \
-	>> /var/run/motd.new
-[ -f /etc/motd.tail ] && cat /etc/motd.tail >> /var/run/motd.new
-rm -f /var/run/motd ; mv /var/run/motd.new /var/run/motd
+	>> /etc/motd.local.new
+[ -f /etc/motd.tail ] && cat /etc/motd.tail >> /etc/motd.local.new
+mv /etc/motd.local.new /etc/motd.local
 
 exit 0

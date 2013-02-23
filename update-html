@@ -7,7 +7,7 @@ cd /var/spool/hosts/
 tinc-graph tinc.png
 
 (
-	cat /etc/motd
+	cat /etc/motd.local
 	echo "TINCPNG"
 ) | aha --title $(hostname) \
 	| sed 's@TINCPNG@<img src="tinc.png" />@gm' \
