@@ -10,7 +10,7 @@ tinc-graph tinc.png
 	cat /etc/motd.local
 	echo "TINCPNG"
 	echo
-	sensors
+	sensors | sed 's@  ALARM@@gm'
 ) | aha --title $(hostname) \
 	| sed 's@TINCPNG@<img src="tinc.png" />@gm' \
 	> index.html
