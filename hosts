@@ -163,7 +163,7 @@ sub check_ports {
 			21 => "ftp", 22 => "ssh:22", 25 => "smtp", 80 => "http", 143 => "imap", 2200 => "ssh:2200",
 			2201 => "ssh:2201", 2202 => "ssh:2202", 2203 => "ssh:2203",
 			443 => "https", 465 => "smtps", 993 => "imaps", 53 => "dns", 8001 => "lighttpd",
-			25565 => "minecraft", 10011 => "teamspeak",
+			25565 => "minecraft", 10011 => "teamspeak", 5060 => "sip:5060", 5061 => "sip:5061",
 			3306 => "mysql",
 			5900 => "vnc:0", 5901 => "vnc:1", 5902 => "vnc:2", 5903 => "vnc:3", 5904 => "vnc:4", 5905 => "vnc:5",
 	);
