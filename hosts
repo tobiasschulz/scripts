@@ -131,8 +131,16 @@ sub status {
 	        my @services = $> ? (keys %{$services_hash{$ip}}) : check_ports($ip);
 	        
             if (@services) {
+            	my %services_tmp = map {$_ => 1} @services;
+            	for my $s (keys %services_tmp) {
+            		if ($services_tmp{$s."s"}) {
+            			delete $services_tmp{$s."s"};
+            			delete $services_tmp{$s};
+            			$services_tmp{$s."[s]"} = 1;
+            		}
+            	}
 	            print " (";
-	            print join(", ", sort @services);
+	            print join(", ", sort keys %services_tmp);
 	            set_services($host, @services);
 	            print ")";
 	        }
@@ -164,7 +172,7 @@ sub check_ports {
 			2201 => "ssh:2201", 2202 => "ssh:2202", 2203 => "ssh:2203",
 			443 => "https", 465 => "smtps", 993 => "imaps", 53 => "dns", 8001 => "lighttpd", 8080 => "http:8080", 8081 => "tail",
 			25565 => "minecraft", 10011 => "teamspeak", 5060 => "sip:5060", 5061 => "sip:5061", 64738 => "mumble",
-			3306 => "mysql", 17500 => "dropbox-lan",
+			3306 => "mysql", 17500 => "dropbox",
 			5900 => "vnc:0", 5901 => "vnc:1", 5902 => "vnc:2", 5903 => "vnc:3", 5904 => "vnc:4", 5905 => "vnc:5",
 	);
 	
