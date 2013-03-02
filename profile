@@ -6,7 +6,7 @@ if [ -f /etc/default/no-history ]; then
 	export HISTSIZE=0
 fi
 
-cat /etc/motd
+cat /etc/motd.local
 
 if [ -d /etc/profile.d ]; then
   for i in /etc/profile.d/*.sh; do
