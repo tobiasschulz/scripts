@@ -30,7 +30,8 @@ echo '#!/bin/bash' > /usr/local/bin/pull-scripts
 echo 'sudo su -c "'$P'/update.sh"' >> /usr/local/bin/pull-scripts
 chown root:root /usr/local/bin/pull-scripts
 chmod u=rwx,g=rx,o=rx /usr/local/bin/pull-scripts
-ln -f /usr/local/bin/pull-scripts /etc/cron.daily/pull-scripts
+rm -f /etc/cron.daily/pull-scripts
+ln -f /usr/local/bin/pull-scripts /etc/cron.hourly/pull-scripts
 
 # dont't do a full install if in a chroot environment!
 
