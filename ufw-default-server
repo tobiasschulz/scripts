@@ -15,12 +15,11 @@ ufw allow 143/tcp # imap
 ufw allow 993/tcp # imaps
 ufw allow from 192.168.100.0/24 to any port 53 # dns
 ufw allow 25565/tcp # minecraft
-ufw allow 10011 # teamspeak
-ufw allow 64738 # mumble
-ufw allow 17500 # dropbox
+ufw allow from 192.168.100.0/24 to any port 10011 # teamspeak
+ufw allow from 192.168.100.0/24 to any port 64738 # mumble
+ufw allow from 192.168.100.0/24 to any port 17500 # dropbox
 ufw allow proto tcp from 192.168.100.0/24 to any port 21 # ftp
-ufw allow 8081 # tailserver
-ufw allow 5060 # sip
+ufw allow from 192.168.100.0/24 to any port 5060 # sip
 ufw enable
 
 

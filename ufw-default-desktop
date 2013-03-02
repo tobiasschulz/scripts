@@ -8,5 +8,7 @@ ufw allow proto tcp from 192.168.100.0/24 to any port 80 # http
 ufw allow proto tcp from 192.168.100.0/24 to any port 443 # https
 ufw allow proto tcp from 192.168.100.0/24 to any port 8001 # lighttpd
 ufw allow from 192.168.100.0/24 to any port 53 # dns
+ufw allow from 192.168.100.0/24 to any port 17500 # dropbox
+ufw allow 8081 # tailserver
 ufw enable
 
