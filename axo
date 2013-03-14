@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ps axo pid,ppid,rss,vsz,nlwp,cmd
+
