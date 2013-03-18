@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+
+my $file = $ARGV[0];
+my $lastseek = 0;
+
+while (1) {
+	my $length = `avconv -i $file 2>&1 | grep Duration | awk '{print \$2}'`;
+	$length =~ s/,.*//gm;
+	$length =~ s/\s+//gm;
+	my ($hour, $min, $sec) = split(/[:]/, $length);
+	$length = $sec+60*$min+60*60*$hour;
+
+	print "File: $file\n";
+	print "Length: $length\n";
+	my $seek = int($length) - 5;
+	print "Seek to: $seek\n";
+	print "\n";
+	
+	if ($seek == $lastseek || $seek < 0) {
+		print "Exit.\n";
+		exit 0;
+	}
+
+	system("mplayer -xy 500 -ontop -vo gl -osdlevel 3 -ss $seek $file");
+	sleep(1);
+}
