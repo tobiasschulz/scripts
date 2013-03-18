@@ -1,7 +1,10 @@
 #!/usr/bin/perl
 
+my $TIMEOUT = 7;
+
 my $file = $ARGV[0];
 my $lastseek = 0;
+my $timeout = $TIMEOUT;
 
 while (1) {
 	my $length = `avconv -i $file 2>&1 | grep Duration | awk '{print \$2}'`;
@@ -17,10 +20,18 @@ while (1) {
 	print "\n";
 	
 	if ($seek == $lastseek || $seek < 0) {
-		print "Exit.\n";
-		exit 0;
+		$timeout--;
+		if ($timeout > 0) {
+			sleep(1);
+			next;
+		}
+		else {
+			print "Exit.\n";
+			exit 0;
+		}
 	}
 
+	$timeout = $TIMEOUT;
 	system("mplayer -xy 500 -ontop -vo gl -osdlevel 3 -ss $seek $file");
 	sleep(1);
 }
