@@ -12,7 +12,7 @@ while (1) {
 
 	print "File: $file\n";
 	print "Length: $length\n";
-	my $seek = int($length) - 5;
+	my $seek = int($length) - 1;
 	print "Seek to: $seek\n";
 	print "\n";
 	
