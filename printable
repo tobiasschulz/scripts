@@ -1,0 +1,4 @@
+#!/bin/bash
+
+tr -dc "[:alnum:][:space:][:punct:]"
+
