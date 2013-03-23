@@ -7,15 +7,16 @@ my $lastseek = 0;
 my $timeout = $TIMEOUT;
 
 while (1) {
-	my $length = `avconv -i $file 2>&1 | grep Duration | awk '{print \$2}'`;
+	my $length = `midentify $file 2>&1 | grep ID_LENGTH`;
+	$length =~ s/ID_LENGTH=//gm;
 	$length =~ s/,.*//gm;
 	$length =~ s/\s+//gm;
-	my ($hour, $min, $sec) = split(/[:]/, $length);
-	$length = $sec+60*$min+60*60*$hour;
+#	my ($hour, $min, $sec) = split(/[:]/, $length);
+#	$length = $sec+60*$min+60*60*$hour;
 
 	print "File: $file\n";
 	print "Length: $length\n";
-	my $seek = int($length) - 1;
+	my $seek = int($length) - 2;
 	print "Seek to: $seek\n";
 	print "\n";
 	
