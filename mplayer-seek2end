@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-my $TIMEOUT = 7;
+my $TIMEOUT = 30;
 
 my $file = $ARGV[0];
 my $lastseek = 0;
