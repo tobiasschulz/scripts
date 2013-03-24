@@ -5,7 +5,7 @@ export P=$(pwd)
 
 # shell scripts
 
-for x in $(ls | grep -v install.sh | grep -v README | grep -v conf)
+for x in $(ls | grep -v install.sh | grep -v README | grep -v '\.conf')
 do
 	ln -sf $P/$x /usr/local/bin/
 	chown root:root $P/$x
