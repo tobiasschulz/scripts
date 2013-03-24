@@ -4,7 +4,7 @@
 
 cd /var/spool/hosts/
 
-tinc-graph tinc.png
+tinc-graph tinc.png 2>/dev/null
 
 (
 	cat /etc/motd.local
