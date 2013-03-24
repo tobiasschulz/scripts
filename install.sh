@@ -33,7 +33,7 @@ chmod u=rwx,g=rx,o=rx /usr/local/bin/pull-scripts
 rm -f /etc/cron.daily/pull-scripts /etc/cron.hourly/pull-scripts
 cat > /etc/cron.hourly/pull-scripts << EOT
 #!/bin/bash
-/usr/local/bin/pull-scripts
+/usr/local/bin/pull-scripts >/dev/null 2>&1
 EOT
 chmod 0755 /etc/cron.hourly/pull-scripts
 
