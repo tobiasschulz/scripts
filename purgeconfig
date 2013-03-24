@@ -1,0 +1,111 @@
+#!/bin/bash
+#
+# Simple script to purge configuration files without purging the package
+# itself. Can be useful when trying to purge things like X, where it
+# will remove many packages with it.
+# USE WITH EXTREME CAUTION!
+#
+# Joel Leclerc
+
+for pkg in archdetect-deb
+do
+	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
+done
+
+# Version string
+VERSION="0.1a"
+# Outputs the architecture
+GETarch()
+{
+	archdetect | awk -F/ '{print $1}'
+}
+# Prints out a usage message
+usage()
+{
+  echo "purgeconfig.sh is a simple script to purge configuration files"\
+" of a package without purging and reinstalling the package itself."
+  echo
+  echo "DO NOT RUN ANY DPKG PROCESSES WHILE RUNNING THIS SCRIPT."
+  echo "USE THIS SCRIPT WITH EXTREME CAUTION."
+  echo
+  echo "USAGE:"
+  echo "======"
+  echo "$0 PACKAGE1[:ARCH] PACKAGE2[:ARCH] etc..."
+  echo ""
+  echo "OPTIONS:"
+  echo "========"
+  echo -e "--help   \t - This message"
+  echo -e "--version\t - Prints out the current version of this "\
+"program"
+  echo
+  echo "NOTES:"
+  echo "======"
+  echo "Do NOT make any REGEX with the package names."
+  echo "If you do not supply an architecture, it will be "\
+"automatically detected."
+  echo "We think your architecture is `GETarch`"
+  echo
+}
+# Package List to reinstall
+export PACKAGELIST=""
+# Check the command line options
+if [[ "$1" == "--help" ]]
+then
+  usage; exit 0
+elif [[ "$1" == "--version" ]]
+then
+  echo $VERSION; exit 0
+fi
+# Check for root
+if [ `id -u` -ne 0 ]
+then
+  echo "You must be root (or run it as sudo) to run this program"
+  exit 1
+fi
+# For each package in the command line opts
+for i in $@
+do
+  pak="$i"
+  arch=`GETarch`
+  work=0
+  echo $i | grep ":" > /dev/null 2>&1
+  if [ $? -eq 0 ]
+  then
+    arch=`echo $i | awk -F: '{print $2}'`
+    pak=`echo $i | awk -F: '{print $1}'`
+  fi
+  ls /var/lib/dpkg/info | grep "$pak\..*" > /dev/null 2>&1
+  if [ $? -eq 0 ]
+  then
+    if [ -f /var/lib/dpkg/info/$pak.conffiles ]
+    then
+      for x in `cat /var/lib/dpkg/info/$pak.conffiles`
+      do
+        rm -rf $x
+      done
+      work=1
+    fi
+  else
+    if [ -f /var/lib/dpkg/info/$pak:$arch.conffiles ]
+    then
+      for x in `cat /var/lib/dpkg/info/$pak:$arch.conffiles`
+      do
+        rm -rf $x
+      done
+      work=1
+    fi
+  fi
+  if [ $work -eq 1 ]
+  then
+    PACKAGELIST="$PACKAGELIST $i"
+    # Show the package as purged, even though it isn't purged
+    cat /var/lib/dpkg/status | awk 'BEGIN {i=0} {if ( i == 1 ) '\
+'{print "Status: purge ok not-installed"; i = 0} else {if ( $1 == '\
+'"Package:" && $2 == "'"$pak"'") { i = 1 }; print $0}}' > \
+/tmp/DPKGSTATUS
+    chmod 0644 /tmp/DPKGSTATUS
+    mv /tmp/DPKGSTATUS /var/lib/dpkg/status
+  fi
+done
+# Reset the configuration files
+apt-get install --reinstall $PACKAGELIST
