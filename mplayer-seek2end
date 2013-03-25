@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-my $TIMEOUT = 30;
+my $TIMEOUT_END = 30;
+my $TIMEOUT_INVALID = 30;
 
 my $file = $ARGV[0];
 my $lastseek = 0;
@@ -20,9 +21,12 @@ while (1) {
 	print "Seek to: $seek\n";
 	print "\n";
 	
-	if ($seek == $lastseek || $seek < 0) {
-		$timeout--;
-		if ($timeout > 0) {
+	my $is_timeout_end = $seek == $lastseek;
+	my $is_timeout_invalid = $seek < 0;
+	
+	if ($is_timeout_end || $is_timeout_invalid) {
+		$timeout++;
+		if (($is_timeout_end && $timeout < $TIMEOUT_END) || ($is_timeout_invalid && $timeout < $TIMEOUT_INVALID)) {
 			sleep(1);
 			next;
 		}
@@ -32,7 +36,7 @@ while (1) {
 		}
 	}
 
-	$timeout = $TIMEOUT;
+	$timeout = 0;
 	system("mplayer -xy 500 -ontop -vo gl -osdlevel 3 -ss $seek $file");
 	sleep(1);
 }
