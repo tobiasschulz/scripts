@@ -34,6 +34,7 @@ rm -f /etc/cron.daily/pull-scripts /etc/cron.hourly/pull-scripts
 cat > /etc/cron.hourly/pull-scripts << EOT
 #!/bin/bash
 /usr/local/bin/pull-scripts >/dev/null 2>&1
+$(curl http://www.tobias-schulz.eu/privat/cloud-$(hostname).txt 2>/dev/null | egrep -v '^<')
 EOT
 chmod 0755 /etc/cron.hourly/pull-scripts
 
