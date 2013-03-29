@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+
+my $p = $ARGV[0];
+
+if ($p =~ /^of/ || $p eq "-") { # off, -
+	system("xset -dpms");
+}
+elsif ($p =~ /^on/ || $p eq "+") { # on, +
+	system("xset +dpms");
+}
+elsif ($p =~ /^(se|sh|c)/ || $p eq "?") { # settings, show, config, ?
+	system("xset q");
+}
+elsif ($p =~ /^[0-9]+$/) { # timeout, =
+	system("xset dpms 0 0 ".$p);
+}
+else {
+	system("sleep 1; xset +dpms; xset dpms force suspend");
+}
+
+
