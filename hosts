@@ -198,13 +198,19 @@ sub check_ports {
 }
 
 sub hosts {
+    system("bash -c 'rm -f /etc/hosts.d/*/.??* 2>/dev/null'");
 	my %hosts = ();
     for my $host (split /\s+/, `cd /etc/hosts.d/; ls`) {
         chomp $host;
+
+        # skip if host has been deleted
+        next if -f "/etc/hosts.d/".$host."/remove";
+
         open my $h, "<", "/etc/hosts.d/".$host."/ip";
         my $ip = <$h>;
         chomp $ip;
         close $h;
+
         $hosts{$host} = $ip;
     }
     return %hosts;
