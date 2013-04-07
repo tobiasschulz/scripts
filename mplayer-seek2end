@@ -4,6 +4,7 @@ my $TIMEOUT_END = 30;
 my $TIMEOUT_INVALID = 30;
 
 my $file = $ARGV[0];
+my $secondsbeforeend = $ARGV[1] || 0;
 my $lastseek = 0;
 my $timeout = $TIMEOUT;
 
@@ -17,7 +18,7 @@ while (1) {
 
 	print "File: $file\n";
 	print "Length: $length\n";
-	my $seek = int($length) - 2;
+	my $seek = int($length) - 2 - $secondsbeforeend;
 	print "Seek to: $seek\n";
 	print "\n";
 	
