@@ -40,4 +40,6 @@ while (1) {
 	$timeout = 0;
 	system("mplayer -xy 500 -ontop -vo gl -osdlevel 3 -ss $seek $file");
 	sleep(1);
+	
+	$lastseek = $seek;
 }
