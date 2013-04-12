@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ "x$1" != "x" ]
+then
+	echo $1
+	cd "$1"
+else
+	echo current directory
+fi
+echo
+
+find -name "*.JPG" -or -name "*.jpg" | while read a
+do
+	identify "$a" | grep 3264 >/dev/null && (
+		echo "$a"
+		mogrify -resize 75% "$a"
+	)
+done
