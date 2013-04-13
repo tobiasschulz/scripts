@@ -10,7 +10,7 @@ my $timeout = $TIMEOUT;
 
 while (1) {
 #	my $length = `midentify $file 2>&1 | grep ID_LENGTH`;
-	my $length = `mplayer -ss 1000000 -speed 100 -vo null -ao null $file 2>/dev/null | grep A: | cut -d" " -f2`;
+	my $length = `mplayer -ss 1000000 -speed 100 -vo null -ao null $file 2>/dev/null | grep A: | cut -d":" -f2 | cut -d" " -f1`;
 	$length =~ s/ID_LENGTH=//gm;
 	$length =~ s/,.*//gm;
 	$length =~ s/\s+//gm;
