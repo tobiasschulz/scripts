@@ -1,0 +1,14 @@
+#!/bin/bash
+
+export SERVERNAME=$1
+export HOSTNAME=$2
+
+mkdir -p /data/Servers/$SERVERNAME/root/
+
+rsync -zavP --human-readable --dry-run \
+	$HOSTNAME:/ /data/Servers/$SERVERNAME/root/ \
+	--exclude "dev/*" --exclude "proc/*" --exclude "sys/*" --exclude "tmp/*" --exclude "data/chroot/*/home/*" --exclude "home/*/local/*" \
+	--exclude "Bilder/*" --exclude "*AeroFS*" --exclude "*aerofs*" \
+	--exclude "cache/*" --exclude "render/*" --exclude "remote/*" \
+	--exclude "help/*" --exclude "freehal_at_home/*/*"
+
