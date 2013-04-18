@@ -1,11 +1,18 @@
 #!/bin/bash
 
+if [ "x$2" = "x" ]
+then
+	echo Usage: $0 LOGICAL_SERVERNAME HOSTNAME RSYNC_PARAMETERS
+	exit 0
+fi
+
 export SERVERNAME=$1
 export HOSTNAME=$2
+export PARAMS=$3
 
 mkdir -p /data/Servers/$SERVERNAME/root/
 
-rsync -zavP --human-readable --dry-run \
+rsync -zavP --human-readable $PARAMS \
 	root@$HOSTNAME:/ /data/Servers/$SERVERNAME/root/ \
 	--exclude "dev/*" --exclude "proc/*" --exclude "sys/*" --exclude "tmp/*" --exclude "data/chroot/*/home/*" --exclude "home/*/local/*" \
 	--exclude "Bilder/*" --exclude "*AeroFS*" --exclude "*aerofs*" \
