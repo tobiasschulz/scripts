@@ -17,5 +17,6 @@ rsync -zavP --human-readable $PARAMS \
 	--exclude "dev/*" --exclude "proc/*" --exclude "sys/*" --exclude "tmp/*" --exclude "data/chroot/*/home/*" --exclude "home/*/local/*" \
 	--exclude "Bilder/*" --exclude "*AeroFS*" --exclude "*aerofs*" \
 	--exclude "cache/*" --exclude "render/*" --exclude "remote/*" --exclude "*backup/*" \
-	--exclude "help/*" --exclude "freehal_at_home/*/*" --exclude "VMs/*"
+	--exclude "help/*" --exclude "freehal_at_home/*/*" --exclude "VMs/*" \
+	--exclude ".local/share/zeitgeist/*" --exclude ".local/share/ubuntuone/*"
 
