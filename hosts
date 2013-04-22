@@ -353,7 +353,7 @@ sub sync {
 			
 			if ($args{"push"}) {
 				print "$localdir -> $host$fqdn:$remotedir\n";
-				system("nc -z $host$fqdn 2200 && " . $pre . $delete . $localdir . "/ " . $host.$fqdn . ":" . $remotedir . "/" . $post);
+				system("echo nc -z $host$fqdn 2200 && " . $pre . $delete . $localdir . "/ " . $host.$fqdn . ":" . $remotedir . "/" . $post);
 			}
 			if ($args{"pull"}) {
 				print "$host$fqdn:$remotedir -> $localdir\n";

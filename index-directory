@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ "x$1" = "x" ]
+then
+	echo "Usage: $0 DIRECTORY"
+	exit 0
+fi
+
+cd "$1"
+
+rm -f index.txt.save
+find | sed 's@^./@@gm' | grep -v index.txt >> index.txt
+cat index.txt | uniq | sort > index.txt.save
+mv -f index.txt.save index.txt
