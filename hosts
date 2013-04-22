@@ -62,6 +62,12 @@ ff02::3 ip6-allhosts};
 
 		print $f "$ip $host $host.vpn\n";
 	}
+    my %hosts_real = hosts_real();
+	for my $host (keys %hosts_real) {
+		my $ip = $hosts_real{$host};
+
+		print $f "$ip $host.real\n";
+	}
 
 	close $f;
 }
@@ -216,6 +222,28 @@ sub hosts {
     return %hosts;
 }
 
+sub hosts_real {
+    system("bash -c 'rm -f /etc/hosts.d/*/.??* 2>/dev/null'");
+	my %hosts = ();
+    for my $host (split /\s+/, `cd /etc/hosts.d/; ls`) {
+        chomp $host;
+
+        # skip if host has been deleted
+        next if -f "/etc/hosts.d/".$host."/remove";
+
+		# skip if host has no real ip address
+        next if ! -f "/etc/hosts.d/".$host."/ip.real";
+
+        open my $h, "<", "/etc/hosts.d/".$host."/ip.real";
+        my $ip = <$h>;
+        chomp $ip;
+        close $h;
+
+        $hosts{$host} = $ip;
+    }
+    return %hosts;
+}
+
 sub services {
 	my %services = ();
 	my %ips = hosts();
@@ -239,6 +267,15 @@ sub set_services {
 
 sub add {
 	my @arg = @_;
+	my $ip_file = "ip";
+	if (@arg > 0 && $arg[0] eq "real") {
+		shift @arg;
+		$ip_file = "ip.real"
+	}
+	if (@arg > 0 && $arg[0] eq "vpn") {
+		shift @arg;
+		$ip_file = "ip"
+	}
 
 	if (scalar @arg == 2) {
 	    my $ip = $arg[0];
@@ -253,12 +290,12 @@ sub add {
 	    print "Host: " . $host . "\n";
 	    
 	    mkdir "/etc/hosts.d/".$host;
-	    open my $f, ">", "/etc/hosts.d/".$host."/ip";
+	    open my $f, ">", "/etc/hosts.d/".$host."/".$ip_file;
 	    print $f $ip."\n";
 	    close $f;
 	}
 	else {
-		print STDERR "Syntax: $0 add IP HOST\n";
+		print STDERR "Syntax: $0 add [real|vpn] IP HOST\n";
 	}
 }
 
