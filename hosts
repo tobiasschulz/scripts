@@ -326,7 +326,7 @@ sub sync {
 	if (!$args{"pull"} && !$args{"push"}) {
 		%args = (%args, "pull" => 1, "push" => 1);
 	}
-	my $pre = "rsyncmono ";
+	my $pre = "rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -zav ";
 	my $post = "";
 	if ($args{"quiet"}) {
 		$pre = "rsync -e 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes ' -za ";
@@ -339,7 +339,6 @@ sub sync {
 	my $delete = "";
 	if ($args{"delete"}) {
 		$delete = " --delete ";
-		$pre = "rsync -zav ";
 	}
 	
 	for my $host (keys %hosts) {
