@@ -24,20 +24,19 @@ sub init {
 sub rebuild {
 	my $hosts = "";
 
-	open my $f, "<", "/etc/hosts";
-	my $line;
-	while (defined($line = <$f>)) {
-		if ($line =~ /^..hosts.d/ || $line =~ /^..static hosts/) {
-			last;
+	if (-f "/etc/hosts.local") {
+		open my $f, "<", "/etc/hosts.local";
+		my $line;
+		while (defined($line = <$f>)) {
+			$hosts .= $line;
 		}
-		$hosts .= $line;
+		close $f;
 	}
-	close $f;
 
 	$hosts =~ s/^\s+//igm;
 	$hosts =~ s/\s+$//igm;
 
-	open $f, ">", "/etc/hosts" or return; # exit if not root!
+	open my $f, ">", "/etc/hosts" or return; # exit if not root!
 	print $f $hosts."\n\n" if $hosts;
 	
 	my $hostname = hostname();
