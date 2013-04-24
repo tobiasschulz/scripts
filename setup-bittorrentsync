@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ `whoami` != root ]; then
+    echo $0 $* | sudo su -
+    exit 0
+fi
+
+cd /root
+
+rm -f btsync_*.tar.gz
+if file /bin/bash 2>/dev/null | grep 64-bit >/dev/null
+then
+	wget http://btsync.s3-website-us-east-1.amazonaws.com/btsync_x64.tar.gz
+else
+	wget http://btsync.s3-website-us-east-1.amazonaws.com/btsync_i386.tar.gz
+fi
+
+mkdir -p bin
+tar xzvf btsync_*.tar.gz -C bin
+
+cd /root; flock -n /tmp/btsync.lock bin/btsync
+
+cat /etc/crontab | grep -v BTSYNC > /tmp/btsync-crontab
+test -f /tmp/btsync-crontab && (
+	cat /tmp/btsync-crontab
+	echo "*/5 * * * * root flock -n /root/btsync.lock /root/bin/btsync # BTSYNC"
+) > /etc/crontab && chmod 0644 /etc/crontab
