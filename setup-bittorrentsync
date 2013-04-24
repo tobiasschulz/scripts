@@ -25,3 +25,5 @@ test -f /tmp/btsync-crontab && (
 	cat /tmp/btsync-crontab
 	echo "*/5 * * * * root flock -n /root/btsync.lock /root/bin/btsync # BTSYNC"
 ) > /etc/crontab && chmod 0644 /etc/crontab
+
+ufw allow from 192.168.100.0/24 to any port 8888 # btsync
