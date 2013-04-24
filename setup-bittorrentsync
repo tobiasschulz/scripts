@@ -27,3 +27,4 @@ test -f /tmp/btsync-crontab && (
 ) > /etc/crontab && chmod 0644 /etc/crontab
 
 ufw allow from 192.168.100.0/24 to any port 8888 # btsync
+ufw allow 34358 # btsync
