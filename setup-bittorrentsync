@@ -23,15 +23,19 @@ else
 	wget http://btsync.s3-website-us-east-1.amazonaws.com/btsync_i386.tar.gz
 fi
 
-mkdir -p bin
-tar xzvf btsync_*.tar.gz -C bin
+killall btsync
+killall btsync
 
-cd /root; flock -n /tmp/btsync.lock bin/btsync
+mkdir -p /etc/btsync/bin
+tar xzvf btsync_*.tar.gz -C /etc/btsync/bin
+test -d /root/bin/.sync && mv /root/bin/.sync /etc/btsync/bin
+chmod 0755 -R /etc/btsync
+chown $U:$U -R /etc/btsync
 
 cat /etc/crontab | grep -v BTSYNC > /tmp/btsync-crontab
 test -f /tmp/btsync-crontab && (
 	cat /tmp/btsync-crontab
-	echo "*/5 * * * * $U nice -n 12 flock -n /root/btsync.lock /root/bin/btsync # BTSYNC"
+	echo "*/5 * * * * $U nice -n 12 flock -n /etc/btsync/btsync.lock /etc/btsync/bin/btsync # BTSYNC"
 ) > /etc/crontab && chmod 0644 /etc/crontab
 
 ufw allow in on eth0 to any port 48888 # btsync
