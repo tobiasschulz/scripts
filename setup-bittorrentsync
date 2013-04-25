@@ -50,7 +50,7 @@ chown $U:$U -R /etc/btsync
 cat /etc/crontab | grep -v BTSYNC > /tmp/btsync-crontab
 test -f /tmp/btsync-crontab && (
 	cat /tmp/btsync-crontab
-	echo "*/5 * * * * $U nice -n 12 flock -n /etc/btsync/btsync.lock sh -c 'BIND_ADDR=$(cat /etc/hosts.d/$(hostname)/ip.real) LD_PRELOAD=./bind.so /etc/btsync/bin/btsync --config /etc/btsync/btsync.conf' # BTSYNC"
+	echo "*/5 * * * * $U nice -n 12 flock -n /etc/btsync/btsync.lock sh -c 'BIND_ADDR=$(cat /etc/hosts.d/$(hostname)/ip.real) LD_PRELOAD=/etc/btsync/bind.so /etc/btsync/bin/btsync --config /etc/btsync/btsync.conf' # BTSYNC"
 ) > /etc/crontab && chmod 0644 /etc/crontab
 
 ufw allow in on eth0 to any port 48888 # btsync
