@@ -36,6 +36,8 @@ cat > /etc/btsync/btsync.conf << EOT
   "listening_port" : 48888,
   "check_for_updates" : true,
   "use_upnp" : true,
+  "lan_encrypt_data" : false,
+  "lan_use_tcp" : true,
   "webui" :
   {
       "listen" : "$VIP:8888"
