@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+use FindBin;
+use lib "$FindBin::Bin/.";
+use Term::ANSIColor 4.00;
+use Term::ANSIColor qw(:constants :pushpop);
+for my $r (0..5) {
+	for my $g (0..5) {
+		for my $b (0..5) {
+			print color("rgb$r$g$b")."$r$g$b".RESET."\n";
+		}
+	}
+}
