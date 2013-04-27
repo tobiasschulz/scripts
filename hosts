@@ -55,13 +55,13 @@ ff02::3 ip6-allhosts};
 	
 	print $f "\n\n# hosts.d\n";
 
-    my %hosts = hosts();
+    my %hosts = ip_addresses("vpn");
 	for my $host (keys %hosts) {
 		my $ip = $hosts{$host};
 
 		print $f "$ip $host $host.vpn\n";
 	}
-    my %hosts_real = hosts_real();
+    my %hosts_real = ip_addresses("direct");
 	for my $host (keys %hosts_real) {
 		my $ip = $hosts_real{$host};
 
@@ -88,7 +88,7 @@ sub fqdn {
 }
 
 sub list {
-    my %hosts = hosts();
+    my %hosts = ip_addresses("vpn");
     for my $host (sort keys %hosts) {
         my $ip = $hosts{$host};
         print "$ip $host\n";
@@ -107,54 +107,99 @@ sub padding {
 }
 
 sub status {
-    my %hosts = hosts();
-    my @hostnames = sort { [split(/\./, $hosts{$b})]->[0] <=> [split(/\./, $hosts{$a})]->[0] }
-                    sort { [split(/\./, $hosts{$a})]->[3] <=> [split(/\./, $hosts{$b})]->[3] }
-                    keys %hosts;
+    my %hosts_vpn = ip_addresses("vpn");
+    my %hosts_lan = ip_addresses("lan");
+    my %hosts_wan = ip_addresses("wan");
+    my @hostnames = sort { [split(/\./, $hosts_vpn{$b})]->[0] <=> [split(/\./, $hosts_vpn{$a})]->[0] }
+                    sort { [split(/\./, $hosts_vpn{$a})]->[3] <=> [split(/\./, $hosts_vpn{$b})]->[3] }
+                    keys %{{%hosts_vpn, %hosts_lan, %hosts_wan}};
 
-    my %ping_ms = ping_ms(map {$hosts{$_}} @hostnames);
+    my %ping_ms = ping_ms(map {grep {$_} ($hosts_vpn{$_}, $hosts_lan{$_}, $hosts_wan{$_})} @hostnames);
 	my %services_hash = services();
 
     for my $host (@hostnames) {
-        my $ip = $hosts{$host};
-        
-        local $Term::ANSIColor::AUTORESET = 1;
-        print BLUE "$host";
-        print padding($host, 11);
-        print " (";
-        print YELLOW "$ip";
-        print "): ";
-        print padding($ip, 15);
-        
-        my $ping = $ping_ms{$ip};
-        
-        if ($ping) {
-        	print BOLD GREEN "up";
-        	print MAGENTA " ".$ping." ms";
-	        print padding($ping, 5);
-	        
-	        my @services = $> ? (keys %{$services_hash{$ip}}) : check_ports($ip);
-	        
-            if (@services) {
-            	my %services_tmp = map {$_ => 1} @services;
-            	for my $s (keys %services_tmp) {
-            		if ($services_tmp{$s."s"}) {
-            			delete $services_tmp{$s."s"};
-            			delete $services_tmp{$s};
-            			$services_tmp{$s."[s]"} = 1;
-            		}
-            	}
-	            print " (";
-	            print join(", ", sort keys %services_tmp);
-	            set_services($host, @services);
-	            print ")";
-	        }
-        }
-        else {
-        	print BOLD RED "down";
-        }
-        print "\n";
+        my $ip_vpn = $hosts_vpn{$host};
+        my $ip_lan = $hosts_lan{$host};
+        my $ip_wan = $hosts_wan{$host};
+
+		my $show_host = 1;
+		if ($ip_vpn) {
+	        print_status_line($ip_vpn,  $host, "vpn", 3, ".vpn", \%ping_ms, \%services_hash, $show_host);
+	        $show_host = 0;
+	    }
+	    if ($ip_lan) {
+	        print_status_line($ip_lan, $host, "lan", 3, ".lan", \%ping_ms, \%services_hash, $show_host);
+	        $show_host = 0;
+	    }
+	    if ($ip_wan) {
+	        print_status_line($ip_wan, $host, "wan", 3, ".wan", \%ping_ms, \%services_hash, $show_host);
+	        $show_host = 0;
+	    }
     }
+}
+
+sub print_colored_ip {
+	my ($ip) = @_;
+	
+	if ($ip =~ /192.168./) {
+		if ($ip =~ /192.168.100./) {
+			print YELLOW $ip;
+		}
+		else {
+			print BLUE $ip;
+		}
+	}
+	else {
+		print CYAN $ip;
+	}
+}
+
+sub print_status_line {
+	my ($ip, $host, $network, $network_width, $suffix, $ping_ms_ref, $services_hash_ref, $show_host) = @_;
+	
+    local $Term::ANSIColor::AUTORESET = 1;
+    if ($show_host) {
+	    print $host;
+	    print padding($host, 11);
+	}
+	else {
+		print padding("", 11);
+	}
+    print " ";
+    print_colored_ip($ip);
+    print padding($ip, 15);
+    print " (".$network."): ";
+    print padding($network, $network_width);
+
+    my $ping = $ping_ms_ref->{$ip};
+
+    if ($ping) {
+     	# print BOLD GREEN "up";
+     	print GREEN "up";
+       	print MAGENTA " ".$ping." ms";
+        print padding($ping, 5);
+	        
+        my @services = $> ? (keys %{$services_hash_ref->{$ip}}) : check_ports($ip);
+	        
+        if (@services) {
+           	my %services_tmp = map {$_ => 1} @services;
+           	for my $s (keys %services_tmp) {
+           		if ($services_tmp{$s."s"}) {
+           			delete $services_tmp{$s."s"};
+           			delete $services_tmp{$s};
+           			$services_tmp{$s."[s]"} = 1;
+           		}
+           	}
+            print " (";
+            print join(", ", sort keys %services_tmp);
+            set_services($host, @services);
+            print ")";
+        }
+    }
+    else {
+      	print RED "down";
+    }
+    print "\n";
 }
 
 sub ping_ms {
@@ -176,8 +221,8 @@ sub check_ports {
 			21 => "ftp", 22 => "ssh:22", 25 => "smtp", 80 => "http", 143 => "imap", 2200 => "ssh:2200",
 			2201 => "ssh:2201", 2202 => "ssh:2202", 2203 => "ssh:2203",
 			443 => "https", 465 => "smtps", 993 => "imaps", 53 => "dns", 8001 => "lighttpd", 8080 => "http:8080", 8081 => "tail",
-			25565 => "minecraft", 10011 => "teamspeak", 5060 => "sip:5060", 5061 => "sip:5061", 64738 => "mumble",
-			3306 => "mysql", 17500 => "dropbox",
+			25565 => "minecraft", 10011 => "teamspeak", 5060 => "sip:5060", 5061 => "sip:5061", 64738 => "mumble", 3306 => "mysql",
+			17500 => "dropbox", 48888 => "btsync", 48887 => "btsync:48887",
 			5900 => "vnc:0", 5901 => "vnc:1", 5902 => "vnc:2", 5903 => "vnc:3", 5904 => "vnc:4", 5905 => "vnc:5",
 	);
 	
@@ -202,26 +247,16 @@ sub check_ports {
 	return @running;
 }
 
-sub hosts {
-    system("bash -c 'rm -f /etc/hosts.d/*/.??* 2>/dev/null'");
-	my %hosts = ();
-    for my $host (split /\s+/, `cd /etc/hosts.d/; ls`) {
-        chomp $host;
-
-        # skip if host has been deleted
-        next if -f "/etc/hosts.d/".$host."/remove";
-
-        open my $h, "<", "/etc/hosts.d/".$host."/ip";
-        my $ip = <$h>;
-        chomp $ip;
-        close $h;
-
-        $hosts{$host} = $ip;
-    }
-    return %hosts;
+sub get_suffix {
+	my ($suffix) = shift @_;
+	$suffix = "" if !$suffix;
+	$suffix = ".".$suffix if $suffix && $suffix !~ /\./;
+	return ($suffix, @_);
 }
 
-sub hosts_real {
+sub ip_addresses {
+	(my $suffix, @_) = get_suffix(@_);
+
     system("bash -c 'rm -f /etc/hosts.d/*/.??* 2>/dev/null'");
 	my %hosts = ();
     for my $host (split /\s+/, `cd /etc/hosts.d/; ls`) {
@@ -230,10 +265,11 @@ sub hosts_real {
         # skip if host has been deleted
         next if -f "/etc/hosts.d/".$host."/remove";
 
-		# skip if host has no real ip address
-        next if ! -f "/etc/hosts.d/".$host."/ip.real";
-
-        open my $h, "<", "/etc/hosts.d/".$host."/ip.real";
+		# hack! for migration to new filenames...
+		unlink "/etc/hosts.d/".$host."/ip";
+		unlink "/etc/hosts.d/".$host."/ip.real";
+		
+        open my $h, "<", "/etc/hosts.d/".$host."/ip".$suffix or next;
         my $ip = <$h>;
         chomp $ip;
         close $h;
@@ -244,11 +280,13 @@ sub hosts_real {
 }
 
 sub services {
+	(my $suffix, @_) = get_suffix(@_);
+
 	my %services = ();
-	my %ips = hosts();
+	my %ips = ip_addresses($suffix);
     for my $host (keys %ips) {
         chomp $host;
-        open my $h, "<", "/etc/hosts.d/".$host."/services" or next;
+        open my $h, "<", "/etc/hosts.d/".$host."/services".$suffix or next;
         my @s = <$h>;
         close $h;
         @s = split(/[^a-z0-9:]/, join(" ", @s));
@@ -258,22 +296,22 @@ sub services {
 }
 
 sub set_services {
+	(my $suffix, @_) = get_suffix(@_);
     my ($host, @services) = @_;
-    open my $h, ">", "/etc/hosts.d/".$host."/services" or return;
+
+    open my $h, ">", "/etc/hosts.d/".$host."/services".$suffix or return;
     print $h join(" ", @services)."\n";
     close $h;
 }
 
 sub add {
 	my @arg = @_;
-	my $ip_file = "ip";
-	if (@arg > 0 && $arg[0] eq "real") {
+	my $suffix = "";
+
+	my %is_possible_network = (vpn => 1, lan => 1, wan => 1);
+	if (@arg > 0 && $is_possible_network{$arg[0]}) {
+		$suffix = "." . $arg[0];
 		shift @arg;
-		$ip_file = "ip.real"
-	}
-	if (@arg > 0 && $arg[0] eq "vpn") {
-		shift @arg;
-		$ip_file = "ip"
 	}
 
 	if (scalar @arg == 2) {
@@ -287,20 +325,21 @@ sub add {
 	    
 	    print "IP: " . $ip . "\n";
 	    print "Host: " . $host . "\n";
+	    print "Network: " . substr($suffix, 1) . "\n";
 	    
 	    mkdir "/etc/hosts.d/".$host;
-	    open my $f, ">", "/etc/hosts.d/".$host."/".$ip_file;
+	    open my $f, ">", "/etc/hosts.d/".$host."/ip".$suffix;
 	    print $f $ip."\n";
 	    close $f;
 	}
 	else {
-		print STDERR "Syntax: $0 add [real|vpn] IP HOST\n";
+		print STDERR "Syntax: $0 add [vpn|lan|wan] IP HOST\n";
 	}
 }
 
 sub sync_dirs {
 	my %syncdirs = ();
-	my %ips = hosts();
+	my %ips = ip_addresses("vpn");
     for my $host (keys %ips) {
         chomp $host;
         open my $h, "<", "/etc/hosts.d/".$host."/sync" or next;
@@ -318,7 +357,7 @@ sub sync_dirs {
 
 sub sync {
 	my %args = map {$_ => 1} @_;
-	my %hosts = hosts();
+	my %hosts = ip_addresses("vpn");
 	my %services = services();
 	my %syncdirs = sync_dirs();
 	
