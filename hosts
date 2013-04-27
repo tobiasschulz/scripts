@@ -284,6 +284,7 @@ sub ip_addresses {
 		# hack! for migration to new filenames...
 		unlink "/etc/hosts.d/".$host."/ip";
 		unlink "/etc/hosts.d/".$host."/ip.real";
+		unlink "/etc/hosts.d/".$host."/services";
 		
         open my $h, "<", "/etc/hosts.d/".$host."/ip".$suffix or next;
         my $ip = <$h>;
