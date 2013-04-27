@@ -124,7 +124,9 @@ sub status {
                     keys %{{%hosts_vpn, %hosts_lan, %hosts_wan}};
 
     my %ping_ms = ping_ms(map {grep {$_} ($hosts_vpn{$_}, $hosts_lan{$_}, $hosts_wan{$_})} @hostnames);
-	my %services_hash = services();
+	my %services_hash_vpn = services("vpn");
+	my %services_hash_lan = services("lan");
+	my %services_hash_wan = services("wan");
 
     for my $host (@hostnames) {
         my $ip_vpn = $hosts_vpn{$host};
@@ -133,15 +135,15 @@ sub status {
 
 		my $show_host = 1;
 		if ($ip_vpn) {
-	        print_status_line($ip_vpn,  $host, "vpn", 3, ".vpn", \%ping_ms, \%services_hash, $show_host);
+	        print_status_line($ip_vpn, $host, "vpn", 3, ".vpn", \%ping_ms, \%services_hash_vpn, $show_host);
 	        $show_host = 0;
 	    }
 	    if ($ip_lan) {
-	        print_status_line($ip_lan, $host, "lan", 3, ".lan", \%ping_ms, \%services_hash, $show_host);
+	        print_status_line($ip_lan, $host, "lan", 3, ".lan", \%ping_ms, \%services_hash_lan, $show_host);
 	        $show_host = 0;
 	    }
 	    if ($ip_wan) {
-	        print_status_line($ip_wan, $host, "wan", 3, ".wan", \%ping_ms, \%services_hash, $show_host);
+	        print_status_line($ip_wan, $host, "wan", 3, ".wan", \%ping_ms, \%services_hash_wan, $show_host);
 	        $show_host = 0;
 	    }
     }
@@ -205,7 +207,7 @@ sub print_status_line {
            	}
             print " (";
             print join(", ", sort keys %services_tmp);
-            set_services($host, @services);
+            set_services($suffix, $host, @services);
             print ")";
         }
     }
@@ -377,7 +379,7 @@ sub sync_dirs {
 sub sync {
 	my %args = map {$_ => 1} @_;
 	my %hosts = ip_addresses("vpn");
-	my %services = services();
+	my %services = services("vpn");
 	my %syncdirs = sync_dirs();
 	
 	if (!$args{"pull"} && !$args{"push"}) {
