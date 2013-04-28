@@ -275,7 +275,7 @@ sub ping_ms {
 sub check_ports {
 	my ($ip) = @_;
 	my %ports = (
-			53 => "dns", 21 => "ftp", 
+			53 => "dns", 21 => "ftp", 445 => "samba",
 			25 => "smtp", 465 => "smtps", 143 => "imap",993 => "imaps", 
 			22 => "ssh:22", 2200 => "ssh:2200", 2201 => "ssh:2201", 2202 => "ssh:2202", 2203 => "ssh:2203",
 			80 => "http", 443 => "https", 8080 => "http:8080", 38080 => "http:38080", 8081 => "tail", 38081 => "tail:38081", 8001 => "lighttpd",
