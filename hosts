@@ -187,14 +187,21 @@ sub print_status_line {
     print padding($network, $network_width);
 
     my $ping = $ping_ms_ref->{$ip};
+    
+    my @services = $> ? (keys %{$services_hash_ref->{$ip}}) : check_ports($ip);
 
-    if ($ping) {
+    if ($ping || @services) {
      	# print BOLD GREEN "up";
-     	print GREEN "up";
-       	print MAGENTA " ".$ping." ms";
-        print padding($ping, 5);
+    	if ($ping) {
+	     	print GREEN "up";
+	       	print MAGENTA " ".$ping." ms";
+	        print padding($ping, 5);
+	    }
+	    else {
+	     	print RED "unreachable";
+	    }
 
-        my @services = $> ? (keys %{$services_hash_ref->{$ip}}) : check_ports($ip);
+#        my @services = $> ? (keys %{$services_hash_ref->{$ip}}) : check_ports($ip);
 
         if (@services) {
         	my @sorted_services = sort_services_ports(sort_services_ssl(@services));
