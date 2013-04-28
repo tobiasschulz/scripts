@@ -245,7 +245,7 @@ sub check_ports {
 	my $portlist = join(",", keys %ports);
 	my $output = `nmap --host-timeout=500 -sS -oG - -p T:$portlist $ip 2>&1 | egrep '(Ports:)|(root privileges)'`;
 	my @running = ();
-	print $output;
+
 	if ($output =~ /root privileges/) {
 		#for my $port (keys %ports) {
 		#	my $service = $ports{$port};
