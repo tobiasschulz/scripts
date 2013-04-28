@@ -5,13 +5,14 @@ if [ `whoami` != root ]; then
     exit 0
 fi
 
-if [ "x$1" = "x" ]
+if [ "x$2" = "x" ]
 then
-	echo Usage: $0 USER
+	echo Usage: $0 USER PORT
 	exit 0
 fi
 
 export U=$1
+export PORT=$2
 
 cd /root
 
@@ -33,7 +34,7 @@ export VIP=$(cat /etc/hosts.d/$(hostname)/ip.vpn)
 export RIP=$(cat /etc/hosts.d/$(hostname)/ip.lan /etc/hosts.d/$(hostname)/ip.wan 2>/dev/null | head -n 1)
 cat > /etc/btsync/btsync.conf << EOT
 {
-  "listening_port" : 48888,
+  "listening_port" : $PORT,
   "check_for_updates" : true,
   "use_upnp" : true,
   "lan_encrypt_data" : false,
@@ -61,3 +62,6 @@ ufw allow in on eth1 to any port 48888 # btsync
 
 ufw allow in on eth0 to any port 48887 # btsync, alternative port
 ufw allow in on eth1 to any port 48887 # btsync, alternative port
+
+ufw allow in on eth0 to any port $PORT # btsync, custom port
+ufw allow in on eth1 to any port $PORT # btsync, custom port
