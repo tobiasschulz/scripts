@@ -29,8 +29,8 @@ killall btsync
 mkdir -p /etc/btsync/bin
 tar xzvf btsync_*.tar.gz -C /etc/btsync/bin
 test -d /root/bin/.sync && mv /root/bin/.sync /etc/btsync/bin
-export VIP=$(cat /etc/hosts.d/$(hostname)/ip)
-export RIP=$(cat /etc/hosts.d/$(hostname)/ip.real)
+export VIP=$(cat /etc/hosts.d/$(hostname)/ip.vpn)
+export RIP=$(cat /etc/hosts.d/$(hostname)/ip.lan /etc/hosts.d/$(hostname)/ip.wan 2>/dev/null | head -n 1)
 cat > /etc/btsync/btsync.conf << EOT
 {
   "listening_port" : 48888,
