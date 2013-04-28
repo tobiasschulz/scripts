@@ -199,10 +199,9 @@ sub print_status_line {
         if (@services) {
         	my @sorted_services = sort_services_ports(sort_services_ssl(@services));
            	
-            print " (";
+            print " ";
             print join(", ", sort @sorted_services);
             set_services($suffix, $host, @services);
-            print ")";
         }
     }
     else {
@@ -281,7 +280,7 @@ sub check_ports {
 			22 => "ssh:22", 2200 => "ssh:2200", 2201 => "ssh:2201", 2202 => "ssh:2202", 2203 => "ssh:2203",
 			80 => "http", 443 => "https", 8080 => "http:8080", 38080 => "http:38080", 8081 => "tail", 38081 => "tail:38081", 8001 => "lighttpd",
 			25565 => "minecraft", 10011 => "teamspeak", 5060 => "sip:5060", 5061 => "sip:5061", 64738 => "mumble", 3306 => "mysql",
-			17500 => "dropbox", 48888 => "btsync:48887", 48887 => "btsync:48887", 8888 => "btsync-ui",
+			17500 => "dropbox", 48888 => "torrentsync:48887", 48887 => "torrentsync:48887", 8888 => "torrentsync-ui",
 			5900 => "vnc:0", 5901 => "vnc:1", 5902 => "vnc:2", 5903 => "vnc:3", 5904 => "vnc:4", 5905 => "vnc:5",
 	);
 	
