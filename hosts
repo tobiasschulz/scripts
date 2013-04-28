@@ -119,8 +119,8 @@ sub status {
     my %hosts_vpn = ip_addresses("vpn");
     my %hosts_lan = ip_addresses("lan");
     my %hosts_wan = ip_addresses("wan");
-    my @hostnames = sort { [split(/\./, $hosts_vpn{$b})]->[0] <=> [split(/\./, $hosts_vpn{$a})]->[0] }
-                    sort { [split(/\./, $hosts_vpn{$a})]->[3] <=> [split(/\./, $hosts_vpn{$b})]->[3] }
+    my @hostnames = sort { ([split(/\./, $hosts_vpn{$b}||"")]->[0]||0) <=> ([split(/\./, $hosts_vpn{$a}||"")]->[0]||0) }
+                    sort { ([split(/\./, $hosts_vpn{$a}||"")]->[3]||0) <=> ([split(/\./, $hosts_vpn{$b}||"")]->[3]||0) }
                     keys %{{%hosts_vpn, %hosts_lan, %hosts_wan}};
 
     my %ping_ms = ping_ms(map {grep {$_} ($hosts_vpn{$_}, $hosts_lan{$_}, $hosts_wan{$_})} @hostnames);
