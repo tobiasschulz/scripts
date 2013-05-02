@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Pre-requisites
+sudo apt-get install git subversion gyp ninja
+
+# Source directory
+cd
+mkdir -p src/
+cd src
+
+if ! test -d chromium
+then
+	# Install chromium repository tools
+	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+	export PATH="$PATH":`pwd`/depot_tools
+
+	# Config chromium project
+	mkdir chromium && cd chromium
+	gclient config https://src.chromium.org/chrome/trunk/src https://chromium-status.appspot.com/lkgr
+
+	# Checkout only source code
+	gclient sync --nohooks
+
+	# Install dependencies
+	./src/build/install-build-deps.sh
+
+	# Build project files
+	export GYP_GENERATORS='ninja'
+	export GYP_DEFINES=werror= 
+	gclient sync --force
+
+	# Compile chromium
+	# ninja -C src/out/Release chrome
+	# And run it!
+	# ./src/out/Release/chrome
+fi
+
+cd ~/src/chromium/src
+if ! grep "define GOOGLE_CLIENT_ID_REMOTING" google_apis/google_api_keys.cc | grep -v DUMMY_API_TOKEN
+then
+	mv google_apis/google_api_keys.cc google_apis/google_api_keys.cc.bak && \
+	(echo '#define GOOGLE_CLIENT_ID_REMOTING "770838328454.apps.googleusercontent.com"'
+	echo '#define GOOGLE_CLIENT_SECRET_REMOTING "sQ7CshVP5xvGrDJ5DEiUYlx8"') > google_apis/google_api_keys.cc && \
+	cat google_apis/google_api_keys.cc.bak >> google_apis/google_api_keys.cc && \
+	rm google_apis/google_api_keys.cc.bak
+fi
+
+# Build custom Chrome Remote desktop Web App first
+./build/gyp_chromium
+ninja -C out/Release/ remoting_me2me_host remoting_start_host remoting_webapp
+
+# Extract newly created zip file into a temporary folder
+unzip out/Release/remoting-webapp.zip -d /tmp/
+
+./remoting/host/installer/linux/build-deb.sh
+
