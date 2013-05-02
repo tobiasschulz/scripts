@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ "x$1" == "x" ]
+then
+	echo Usage: $0 DIR
+	exit
+fi
+
+cd "$1"
+
+function _rename () {
+	cat | while read a
+		do
+			export b="$(echo "$a" | sed 's@[:]@_@gm')"
+			if [ "$a" != "$b" ]
+			then
+				mv -v "$a" "$b"
+			fi
+		done
+}
+
+find -type d | sort | _rename
+find -type d | sort | _rename
+find -type f | sort | _rename
+
+
