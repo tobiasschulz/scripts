@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # Pre-requisites
-sudo apt-get install git subversion gyp ninja
+export INSTALL="git subversion gyp ninja-build"
+for pkg in $INSTALL
+do
+    dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $INSTALL
+done
 
 # Source directory
 cd
