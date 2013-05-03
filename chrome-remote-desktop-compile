@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "x$x" = "x" ]
+if [ "x$1" = "x" ]
 then
 	echo Usage: $0 OUTPUT_DIR
 	exit 0
