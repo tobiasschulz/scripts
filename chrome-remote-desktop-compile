@@ -39,6 +39,10 @@ then
 	# ./src/out/Release/chrome
 fi
 
+export API=AIzaSyDJNQKHk0JqIXoElC7Eyx52bPreEeCG1kA
+export ID=770838328454.apps.googleusercontent.com
+export SEC=sQ7CshVP5xvGrDJ5DEiUYlx8
+
 cd ~/src/chromium/src
 if ! grep "define GOOGLE_CLIENT_ID_REMOTING" google_apis/google_api_keys.cc | grep -vi DUMMY
 then
@@ -49,8 +53,16 @@ then
 	rm google_apis/google_api_keys.cc.bak
 fi
 
+mkdir google_apis/internal
+cat > google_apis/internal/google_chrome_api_keys.h << EOT
+#define GOOGLE_API_KEY "$API"
+#define GOOGLE_CLIENT_ID_MAIN "$ID"
+#define GOOGLE_CLIENT_SECRET_MAIN "$SEC"
+#define GOOGLE_CLIENT_ID_REMOTING "$ID"
+#define GOOGLE_CLIENT_SECRET_REMOTING "$SEC"
+EOT
 # Build custom Chrome Remote desktop Web App first
-./build/gyp_chromium
+./build/gyp_chromium -Dgoogle_api_key="$API" -Dgoogle_default_client_id="$ID" -Dgoogle_default_client_secret="$SEC" -Dgoogle_remoting_client_id="$ID" -Dgoogle_remoting_client_secret="$SEC"
 ninja -C out/Release/ remoting_me2me_host remoting_start_host remoting_webapp
 
 # Extract newly created zip file into a temporary folder
