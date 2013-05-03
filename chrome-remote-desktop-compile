@@ -40,7 +40,7 @@ then
 fi
 
 cd ~/src/chromium/src
-if ! grep "define GOOGLE_CLIENT_ID_REMOTING" google_apis/google_api_keys.cc | grep -v DUMMY_API_TOKEN
+if ! grep "define GOOGLE_CLIENT_ID_REMOTING" google_apis/google_api_keys.cc | grep -vi DUMMY
 then
 	mv google_apis/google_api_keys.cc google_apis/google_api_keys.cc.bak && \
 	(echo '#define GOOGLE_CLIENT_ID_REMOTING "770838328454.apps.googleusercontent.com"'
