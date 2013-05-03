@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ "x$x" = "x" ]
+then
+	echo Usage: $0 OUTPUT_DIR
+	exit 0
+fi
+
+export OUTPUT_DIR=$1
+
 # Pre-requisites
 export INSTALL="git subversion gyp ninja-build"
 for pkg in $INSTALL
@@ -53,7 +61,7 @@ then
 	rm google_apis/google_api_keys.cc.bak
 fi
 
-mkdir google_apis/internal
+mkdir google_apis/internal 2>/dev/null
 cat > google_apis/internal/google_chrome_api_keys.h << EOT
 #define GOOGLE_API_KEY "$API"
 #define GOOGLE_CLIENT_ID_MAIN "$ID"
@@ -70,3 +78,5 @@ unzip out/Release/remoting-webapp.zip -d /tmp/
 
 ./remoting/host/installer/linux/build-deb.sh
 
+mkdir -p $OUTPUT_DIR 2>/dev/null
+cp out/Release/remoting-webapp.zip remoting/host/installer/*.deb $OUTPUT_DIR
