@@ -24,8 +24,11 @@ do
 
 		for h in $HOSTS
 		do
-			grep ssh:2200 /etc/hosts.d/$h/services >/dev/null 2>&1 && \
-				echo $h" -fstype=fuse,rw,nodev,nonempty,noatime,allow_other,reconnect,max_read=65536 :sshfs\#root@"$h"\:/home/"$u >> /etc/auto.sshfs.$u
+			for d in vpn lan wan
+			do
+				grep ssh:2200 /etc/hosts.d/$h/services.$d >/dev/null 2>&1 && \
+					echo $h"."$d" -fstype=fuse,rw,nodev,nonempty,noatime,allow_other,reconnect,max_read=65536 :sshfs\#root@"$h"."$d"\:/home/"$u >> /etc/auto.sshfs.$u
+			done
 		done
 	done
 done
