@@ -10,5 +10,5 @@ cd "$1"
 
 rm -f index.txt.save
 find | sed 's@^./@@gm' | grep -v index.txt >> index.txt
-cat index.txt | grep -v '^.$' | grep -v '^..$' | uniq | sort > index.txt.save
+cat index.txt | grep -v '^.$' | grep -v '^..$' | sort | uniq | sort > index.txt.save
 mv -f index.txt.save index.txt
