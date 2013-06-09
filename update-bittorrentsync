@@ -6,6 +6,7 @@ if [ `whoami` != root ]; then
 fi
 
 export U=$(ls -l /etc/btsync/bin/btsync | awk '{print $3}')
+export G=$(ls -l /etc/btsync/bin/btsync | awk '{print $4}')
 cd /root
 
 rm -f btsync_*.tar.gz
@@ -22,5 +23,5 @@ killall btsync
 mkdir -p /etc/btsync/bin
 tar xzvf btsync_*.tar.gz -C /etc/btsync/bin
 chmod 0755 -R /etc/btsync
-chown $U:$U -R /etc/btsync
+chown $U:$G -R /etc/btsync
 
