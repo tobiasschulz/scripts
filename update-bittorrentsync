@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ `whoami` != root ]; then
+    echo $0 $* | sudo su -
+    exit 0
+fi
+
+export U=$(ls -l /etc/btsync/bin/btsync | awk '{print $3}')
+cd /root
+
+rm -f btsync_*.tar.gz
+if file /bin/bash 2>/dev/null | grep 64-bit >/dev/null
+then
+	wget http://btsync.s3-website-us-east-1.amazonaws.com/btsync_x64.tar.gz
+else
+	wget http://btsync.s3-website-us-east-1.amazonaws.com/btsync_i386.tar.gz
+fi
+
+killall btsync
+killall btsync
+
+mkdir -p /etc/btsync/bin
+tar xzvf btsync_*.tar.gz -C /etc/btsync/bin
+chmod 0755 -R /etc/btsync
+chown $U:$U -R /etc/btsync
+
