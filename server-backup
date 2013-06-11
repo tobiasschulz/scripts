@@ -18,5 +18,6 @@ rsync -zavP --human-readable $PARAMS \
 	--exclude "Bilder/*" --exclude "*AeroFS*" --exclude "*aerofs*" --exclude "*btsync*" \
 	--exclude "cache/*" --exclude "render/*" --exclude "remote/*" --exclude "*backup/*" \
 	--exclude "help/*" --exclude "freehal_at_home/*/*" --exclude "VMs/*" \
-	--exclude ".local/share/zeitgeist/*" --exclude ".local/share/ubuntuone/*" --exclude "Trash/*"
+	--exclude ".local/share/zeitgeist/*" --exclude ".local/share/ubuntuone/*" --exclude "Trash/*" \
+	--exclude "*serien*" --exclude "*VMs*"
 
