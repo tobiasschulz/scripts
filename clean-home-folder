@@ -1,7 +1,13 @@
 #!/bin/bash
 
+# delete trash
 rm -rf ~/.local/share/Trash/files/*
+
+# delete thumbnails
 rm -rf ~/.cache/thumbnails/*/*
 rm -f ~/.cache/shotwell/thumbs/thumbs*/*
+
+# delete caches
 rm -rf ~/.m2/
 rm -rf ~/.cache/tracker/
+rm -rf ~/.cache/wine/
