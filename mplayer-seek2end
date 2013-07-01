@@ -9,8 +9,10 @@ my $lastseek = 0;
 my $timeout = $TIMEOUT;
 
 while (1) {
+	my $sec_delay = time;
 #	my $length = `midentify $file 2>&1 | grep ID_LENGTH`;
 	my $length = `mplayer -ss 1000000 -speed 100 -vo null -ao null $file 2>/dev/null | grep A: | cut -d":" -f2`;
+	$sec_delay = time - $sec_delay;
 	$length =~ s/^\s+//gm;
 	$length =~ s/\s+.*//gm;
 
@@ -23,7 +25,8 @@ while (1) {
 	print "File: $file\n";
 	print "Length: $length\n";
 	my $seek = int($length) - 2 - $secondsbeforeend;
-	print "Seek to: $seek\n";
+	print "Seek to: $seek (+$sec_delay)\n";
+	$seek += $sec_delay;
 	print "\n";
 	
 	my $is_timeout_end = $seek == $lastseek;
