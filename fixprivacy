@@ -3,6 +3,13 @@
 rm -f $HOME/.local/share/recently-used.xbel
 mkdir -p $HOME/.local/share/recently-used.xbel
 
+# leider nicht zuverlaessig:
+#   GTK 3
+mkdir -p ~/.config/gtk-3.0
+echo -e "[Settings]\ngtk-recent-files-max-age=0\ngtk-recent-files-limit=0" > ~/.config/gtk-3.0/settings.ini
+#   GTK 2
+echo gtk-recent-files-max-age=0 >> ~/.gtkrc-2.0
+
 # http://ubuntuforums.org/showthread.php?t=2000108
 sudo aptitude purge zeitgeist zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist geoclue geoclue-ubuntu-geoip geoip-database whoopsie tracker
 
