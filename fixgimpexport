@@ -2,6 +2,7 @@
 
 # http://forum.ubuntuusers.de/topic/gimp-downgrade-von-2-8-auf-2-6-moeglich-unter-/#post-4965767
 
+mkdir ~/.gimp-2.8/plug-ins/
 cd ~/.gimp-2.8/plug-ins/
 wget -c https://raw.github.com/tobiasschulz/gimp-plugins/master/save-export-clean.py
 chmod 755 save-export-clean.py
