@@ -56,8 +56,8 @@ do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $pkg
 done
 
-test -f /usr/sbin/tincd || tinc-compile
-test -f /usr/bin/nmap || nmap-compile
+#test -f /usr/sbin/tincd || tinc-compile
+#test -f /usr/bin/nmap || nmap-compile
 
 # hosts availability script
 
