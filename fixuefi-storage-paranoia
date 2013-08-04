@@ -1,0 +1,17 @@
+#!/bin/bash
+
+rm /sys/firmware/efi/efivars/dump-type0-*
+
+# https://bugs.archlinux.org/task/34641
+
+# This issue is due to some efi variable storage checks in kernel >=3.8 (to prevent Samsung UEFI like issues)
+# and due to the inclusion of support for storing pstore dumps in efi variable storage.
+# Without "efi_no_storage_paranoia" the kernel will refuse to write/modify any efivar if the firmware reports
+# that more than half of its total efivar storage space is already used up.
+# The parameter "efi_no_storage_paranoia" disables this check.
+
+# Check for existence of /sys/firmware/efi/efivars/dump-* files. If they exist delete them
+# (ie. pstore dumps stored in efivars) and reboot. You should be able to use efibootmgr properly without
+# "efi_no_storage_paranoia".
+# For a similar discussion in Fedora's bugzilla see https://bugzilla.redhat.com/show_bug.cgi?id=947142
+# https://bugzilla.redhat.com/show_bug.cgi?id=919485 may also be helpful.
