@@ -497,7 +497,7 @@ sub install {
 	{
 		system("rm /etc/resolv.conf");
 		open my $f, ">", "/etc/resolv.conf";
-		print $f qq{nameserver 127.0.1.1\nnameserver 8.8.8.8\n};
+		print $f qq{nameserver 8.8.8.8\nnameserver 127.0.0.1\n};
 		close $f;
 	}
 	{
