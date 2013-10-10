@@ -503,7 +503,7 @@ sub install {
 	{
 		system("rm /etc/init.d/hosts");
 		open my $f, ">", "/etc/init.d/hosts";
-#		print $f "#!/bin/bash\n".$lsb."\n".$0.' $*'."\n";
+		print $f "#!/bin/bash\n".$lsb."\n".$0.' $*'."\n";
 		close $f;
 		system("chmod 0777 /etc/init.d/hosts");
 		system("update-rc.d hosts defaults 2>&1 | grep -v 'already exist'");
