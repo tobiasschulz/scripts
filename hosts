@@ -68,7 +68,12 @@ ff02::3 ip6-allhosts};
 	for my $host (keys %hosts_wan) {
 		my $ip = $hosts_wan{$host};
 
-		print $f "$ip $host.wan $host.public\n";
+		if ($hosts_lan{$host}) {
+			print $f "$ip $host.wan\n";
+		}
+		else {
+			print $f "$ip $host $host.wan\n";
+		}
 	}
 
 	close $f;
