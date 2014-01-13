@@ -58,17 +58,11 @@ ff02::3 ip6-allhosts};
 	
 	print $f "\n\n# hosts.d\n";
 
-    my %hosts = ip_addresses("vpn");
-	for my $host (keys %hosts) {
-		my $ip = $hosts{$host};
-
-		print $f "$ip $host $host.vpn\n";
-	}
     my %hosts_lan = ip_addresses("lan");
 	for my $host (keys %hosts_lan) {
 		my $ip = $hosts_lan{$host};
 
-		print $f "$ip $host.lan\n";
+		print $f "$ip $host $host.lan\n";
 	}
     my %hosts_wan = ip_addresses("wan");
 	for my $host (keys %hosts_wan) {
@@ -97,7 +91,7 @@ sub fqdn {
 }
 
 sub list {
-    my %hosts = ip_addresses("vpn");
+    my %hosts = ip_addresses("lan");
     for my $host (sort keys %hosts) {
         my $ip = $hosts{$host};
         print "$ip $host\n";
@@ -116,28 +110,21 @@ sub padding {
 }
 
 sub status {
-    my %hosts_vpn = ip_addresses("vpn");
     my %hosts_lan = ip_addresses("lan");
     my %hosts_wan = ip_addresses("wan");
-    my @hostnames = sort { ([split(/\./, $hosts_vpn{$b}||"")]->[0]||0) <=> ([split(/\./, $hosts_vpn{$a}||"")]->[0]||0) }
-                    sort { ([split(/\./, $hosts_vpn{$a}||"")]->[3]||0) <=> ([split(/\./, $hosts_vpn{$b}||"")]->[3]||0) }
-                    keys %{{%hosts_vpn, %hosts_lan, %hosts_wan}};
+    my @hostnames = sort { ([split(/\./, $hosts_lan{$b}||"")]->[0]||0) <=> ([split(/\./, $hosts_lan{$a}||"")]->[0]||0) }
+                    sort { ([split(/\./, $hosts_lan{$a}||"")]->[3]||0) <=> ([split(/\./, $hosts_lan{$b}||"")]->[3]||0) }
+                    keys %{{%hosts_lan, %hosts_wan}};
 
-    my %ping_ms = ping_ms(map {grep {$_} ($hosts_vpn{$_}, $hosts_lan{$_}, $hosts_wan{$_})} @hostnames);
-	my %services_hash_vpn = services("vpn");
+    my %ping_ms = ping_ms(map {grep {$_} ($hosts_lan{$_}, $hosts_wan{$_})} @hostnames);
 	my %services_hash_lan = services("lan");
 	my %services_hash_wan = services("wan");
 
     for my $host (@hostnames) {
-        my $ip_vpn = $hosts_vpn{$host};
         my $ip_lan = $hosts_lan{$host};
         my $ip_wan = $hosts_wan{$host};
 
 		my $show_host = 1;
-		if ($ip_vpn) {
-	        print_status_line($ip_vpn, $host, "vpn", 3, ".vpn", \%ping_ms, \%services_hash_vpn, $show_host);
-	        $show_host = 0;
-	    }
 	    if ($ip_lan) {
 	        print_status_line($ip_lan, $host, "lan", 3, ".lan", \%ping_ms, \%services_hash_lan, $show_host);
 	        $show_host = 0;
@@ -380,7 +367,7 @@ sub add {
 	my @arg = @_;
 	my $suffix = "";
 
-	my %is_possible_network = (vpn => 1, lan => 1, wan => 1);
+	my %is_possible_network = (lan => 1, wan => 1);
 	if (@arg > 0 && $is_possible_network{$arg[0]}) {
 		$suffix = "." . $arg[0];
 		shift @arg;
@@ -405,13 +392,13 @@ sub add {
 	    close $f;
 	}
 	else {
-		print STDERR "Syntax: $0 add [vpn|lan|wan] IP HOST\n";
+		print STDERR "Syntax: $0 add [lan|wan] IP HOST\n";
 	}
 }
 
 sub sync_dirs {
 	my %syncdirs = ();
-	my %ips = ip_addresses("vpn");
+	my %ips = ip_addresses("lan");
     for my $host (keys %ips) {
         chomp $host;
         open my $h, "<", "/etc/hosts.d/".$host."/sync" or next;
@@ -429,8 +416,8 @@ sub sync_dirs {
 
 sub sync {
 	my %args = map {$_ => 1} @_;
-	my %hosts = ip_addresses("vpn");
-	my %services = services("vpn");
+	my %hosts = ip_addresses("lan");
+	my %services = services("lan");
 	my %syncdirs = sync_dirs();
 	
 	if (!$args{"pull"} && !$args{"push"}) {
