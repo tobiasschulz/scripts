@@ -20,7 +20,7 @@ do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $PURGE
 done
 
-export INSTALL="netcat-openbsd dnsutils rsync graphviz fping aha ufw curl wget lm-sensors syslinux"
+export INSTALL="netcat-openbsd dnsutils rsync graphviz fping aha ufw curl wget lm-sensors syslinux gpm"
 for pkg in $INSTALL
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $INSTALL
