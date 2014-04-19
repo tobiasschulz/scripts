@@ -474,17 +474,8 @@ sub install {
 	{
 		system("mv /etc/crontab /etc/crontab.bak; grep -v $0 /etc/crontab.bak | grep -v HOSTS > /etc/crontab");
 		open my $f, ">>", "/etc/crontab";
-		print $f '*/5 * * * * root $(dirname '.$0.')/update-motd ; $(dirname '.$0.')/update-html'." # HOSTS\n";
-		print $f '*/5 * * * * root /etc/init.d/tinc start >/dev/null 2>&1'." # HOSTS\n";
 		print $f '0 * * * * root '.$0.' sync >/dev/null 2>&1'." # HOSTS \n";
 		close $f;
-	}
-	unlink("/etc/update-motd.d/10-help-text");
-	{
-		open my $f, ">", "/etc/update-motd.d/10-hosts";
-		print $f q{echo; }.$0.q{ status | perl -n -e 'print "  "; print;' 2>/dev/null}.qq{\n};
-		close $f;
-		system("chmod 0777 /etc/update-motd.d/10-hosts");
 	}
 	{
 		system("rm /etc/resolv.conf");
@@ -492,15 +483,6 @@ sub install {
 		print $f qq{nameserver 8.8.8.8\n};
 		close $f;
 	}
-	{
-		system("rm /etc/init.d/hosts");
-		open my $f, ">", "/etc/init.d/hosts";
-		print $f "#!/bin/bash\n".$lsb."\n".$0.' $*'."\n";
-		close $f;
-		system("chmod 0777 /etc/init.d/hosts");
-		system("update-rc.d hosts defaults 2>&1 | grep -v 'already exist'");
-	}
-	system("comment-out pam_motd.so /etc/pam.d/*");
 }
 
 init;
