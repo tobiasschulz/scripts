@@ -14,13 +14,13 @@ done
 
 # install packages
 
-export PURGE="bind9 sendmail-base sendmail-bin sendmail-cf sendmail-doc rmail tinc nmap"
+export PURGE="bind9 sendmail-base sendmail-bin sendmail-cf sendmail-doc rmail tinc"
 for pkg in $PURGE
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 && aptitude purge $PURGE
 done
 
-export INSTALL="netcat-openbsd dnsutils rsync graphviz fping aha ufw curl wget lm-sensors syslinux gpm"
+export INSTALL="netcat-openbsd dnsutils rsync graphviz fping aha ufw curl wget lm-sensors syslinux gpm nmap"
 for pkg in $INSTALL
 do
 	dpkg -l | grep " $pkg " >/dev/null 2>&1 || aptitude install $INSTALL

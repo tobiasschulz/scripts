@@ -1,8 +1,0 @@
-#!/bin/bash
-
-export NET=$(tail -n 1 /etc/tinc/nets.boot)
-export FILE=$1
-
-export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-tincctl -n $NET dump graph | /usr/bin/dot -Tpng -o $FILE
-
