@@ -19,6 +19,9 @@
 Host github.com
 Port 22
 
+Host bitbucket.org
+Port 22
+
 Host *
 Port 2200
 
