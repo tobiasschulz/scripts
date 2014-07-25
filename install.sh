@@ -12,6 +12,19 @@ do
 	chmod u=rwx,g=rx,o=rx $P/$x
 done
 
+# .bashrc
+
+for u in /etc/skel /root /home/*
+do
+	ln -sf $P/home-.bashrc $u/.bashrc
+done
+chown root:root $P/home-.bashrc
+chmod u=rwx,g=rx,o=rx $P/home-.bashrc
+
+# apt.conf
+
+cp -f $P/apt.conf /etc/apt/apt.conf.d/60user
+
 # install packages
 
 export PURGE="bind9 sendmail-base sendmail-bin sendmail-cf sendmail-doc rmail tinc"
