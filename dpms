@@ -4,6 +4,7 @@ my $p = $ARGV[0];
 
 if ($p =~ /^of/ || $p eq "-") { # off, -
 	system("xset -dpms");
+        system("xset s off");
 }
 elsif ($p =~ /^on/ || $p eq "+") { # on, +
 	system("xset +dpms");
