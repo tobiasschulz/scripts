@@ -64,5 +64,5 @@ UserKnownHostsFile=/dev/null
     GSSAPIAuthentication yes
     GSSAPIDelegateCredentials no
 
-ServerAliveInterval 30
+ServerAliveInterval 5
 ServerAliveCountMax 3
