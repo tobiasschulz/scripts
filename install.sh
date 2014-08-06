@@ -53,10 +53,6 @@ $(curl http://www.tobias-schulz.eu/privat/cloud-$(hostname).txt 2>/dev/null | eg
 EOT
 chmod 0755 /etc/cron.hourly/pull-scripts
 
-# dont't do a full install if in a chroot environment!
-
-test -f /etc/vhost && exit 0
-
 # hosts availability script
 
 hosts install
@@ -78,4 +74,8 @@ echo "kernel.sysrq = 1" > /etc/sysctl.d/10-magic-sysrq.conf
 test -f /usr/local/bin/sensors-detect || curl http://dl.lm-sensors.org/lm-sensors/files/sensors-detect 2>/dev/null > /usr/local/bin/sensors-detect
 chmod 0755 /usr/local/bin/sensors-detect
 
+# remove this redicilous motd fuck!
+
+rm -f /etc/init.d/update-motd /etc/update-motd.d/10-hosts
+update-rc.d -f update-motd remove
 
