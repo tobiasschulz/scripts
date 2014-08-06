@@ -61,10 +61,6 @@ rm -f /etc/init.d/hosts
 
 cp -ra $P/etc/* /etc/
 
-# magic sysrq
-
-echo "kernel.sysrq = 1" > /etc/sysctl.d/10-magic-sysrq.conf
-
 # lm-sensors
 
 test -f /usr/local/bin/sensors-detect || curl http://dl.lm-sensors.org/lm-sensors/files/sensors-detect 2>/dev/null > /usr/local/bin/sensors-detect
