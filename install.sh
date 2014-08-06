@@ -69,5 +69,5 @@ chmod 0755 /usr/local/bin/sensors-detect
 # remove this redicilous motd fuck!
 
 rm -f /etc/init.d/update-motd /etc/update-motd.d/10-hosts
-update-rc.d -f update-motd remove
+update-rc.d -f update-motd remove >/dev/null 2>&1
 
