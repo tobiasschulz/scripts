@@ -5,7 +5,7 @@ export P=$(pwd)
 
 # shell scripts
 
-for x in $(ls | grep -v install.sh | grep -v README | grep -v '\.conf')
+for x in bin/*
 do
 	ln -sf $P/$x /usr/local/bin/
 	chown root:root $P/$x
@@ -20,10 +20,6 @@ do
 done
 chown root:root $P/home-.bashrc
 chmod u=rwx,g=rx,o=rx $P/home-.bashrc
-
-# apt.conf
-
-cp -f $P/apt.conf /etc/apt/apt.conf.d/60user
 
 # install packages
 
