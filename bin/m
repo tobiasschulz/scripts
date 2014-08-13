@@ -1,3 +1,8 @@
 #!/bin/bash
 
-mplayer -ontop -vo gl "$@"
+if which mpv >/dev/null
+then
+	mpv --ontop "$@"
+else
+	mplayer -ontop -vo gl "$@"
+fi
