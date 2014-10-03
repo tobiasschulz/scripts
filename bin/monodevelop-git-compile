@@ -16,3 +16,5 @@ cd monodevelop
 git-submodule-update
 ./configure --profile=stable --prefix=/opt/monodevelop-git
 sudo make install
+
+sudo wget -O /opt/monodevelop-git/monodevelop.png http://upload.wikimedia.org/wikipedia/uk/f/f3/Monodevelop-logo.png
