@@ -1,9 +1,15 @@
 #!/bin/bash
 
+# http://stackoverflow.com/questions/15181888/nuget-on-linux-error-getting-response-stream/16589218#16589218
+
 sudo mozroots --import --machine --sync
 sudo certmgr -ssl -m https://go.microsoft.com
 sudo certmgr -ssl -m https://nugetgallery.blob.core.windows.net
 sudo certmgr -ssl -m https://nuget.org
+
+# http://www.davidloo.com/?p=479
+
+sudo apt-get install git automake gtk-sharp2 gnome-sharp2 mono-xsp4 libglade2.0-cil-dev
 
 git clone https://github.com/mono/monodevelop.git
 cd monodevelop
