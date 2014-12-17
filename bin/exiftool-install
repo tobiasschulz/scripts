@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export HOMEPAGE=http://www.sno.phy.queensu.ca/~phil/exiftool/
+export FILENAME=$(curl $HOMEPAGE 2>/dev/null | grep '<a href="Image-' | cut -d'"' -f2)
+
+cd /tmp
+rm -rf Image-ExifTool-*
+curl $HOMEPAGE/$FILENAME > Image-ExifTool.tar.gz && \
+tar xzf Image-ExifTool.tar.gz && \
+cd Image-ExifTool-* && \
+perl Makefile.PL && \
+sudo make install
